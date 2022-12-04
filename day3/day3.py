@@ -51,7 +51,7 @@ def get_value_from_all_groups_of_three(fname=RUCKSACKS_FNAME) -> int:
     print(f"Histogram of repeat items: {counter}")
     return running_total
 
-def get_common_item_type(*groups) -> str:
+def get_common_item_type(*groups) -> set:
     common_set = set(groups[0])
     for each in groups[1:]:
         common_set = common_set & set(each)
