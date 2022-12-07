@@ -87,7 +87,6 @@ def create_graph_from_text(lines):
     root = Directory('/')
     current_node = root
     for line in lines:
-        # print(line)
         output = line.split(" ")
         if output[0] == "$": #command
             if output[1] == "cd":
