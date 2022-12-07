@@ -114,7 +114,6 @@ def return_every_directory_as_list(root):
         if type(child) == Directory:
             directories = directories + return_every_directory_as_list(child)
     return directories
-        
 
 def get_sum_of_small_directories():
     lines = get_inputs_from_file()
@@ -127,8 +126,20 @@ def get_sum_of_small_directories():
             running_sum += size
     return running_sum
 
+def smallest_directory_to_delete(size_total=70000000, size_needed=30000000):
+    lines = get_inputs_from_file()
+    root = create_graph_from_text(lines)
+    size_occupied = root.calc_size()
+    size_extra_needed = size_needed - (size_total - size_occupied)
+    directories = return_every_directory_as_list(root)
+    candidate=size_needed
+    for directory in directories:
+        size = directory.calc_size()
+        if size > size_extra_needed:
+            if size < candidate:
+                candidate=size
+    return candidate
 
-    print(root.pprint())
 
 def test_graph():
     a = Directory('a')
@@ -148,3 +159,5 @@ def test_graph():
 if __name__ == "__main__":
     running_sum = get_sum_of_small_directories()
     print(f"Sum small directories: {running_sum}")
+    smallest_directory_size_to_delete = smallest_directory_to_delete()
+    print(f"Smallest directory size to delete: {smallest_directory_size_to_delete}")
