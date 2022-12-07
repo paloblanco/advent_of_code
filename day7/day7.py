@@ -87,7 +87,7 @@ def create_graph_from_text(lines):
     root = Directory('/')
     current_node = root
     for line in lines:
-        print(line)
+        # print(line)
         output = line.split(" ")
         if output[0] == "$": #command
             if output[1] == "cd":
@@ -98,19 +98,37 @@ def create_graph_from_text(lines):
             if not child_present:
                 current_node.add_child(Directory(child_name))
         else:
-            size = output[0]
+            size = int(output[0])
             child_name = output[1]
             child_present = current_node.check_if_child_exists(child_name)
             if not child_present:
                 current_node.add_child(File(child_name, size))
-        print(root.pprint())
-        sleep(0.025)
-        clear()
+        # print(root.pprint())
+        # sleep(0.025)
+        # clear()
     return root
 
-def main():
+def return_every_directory_as_list(root):
+    if type(root) != Directory: return []
+    directories = [root,]
+    for child in root.children:
+        if type(child) == Directory:
+            directories = directories + return_every_directory_as_list(child)
+    return directories
+        
+
+def get_sum_of_small_directories():
     lines = get_inputs_from_file()
     root = create_graph_from_text(lines)
+    running_sum = 0
+    directories = return_every_directory_as_list(root)
+    for directory in directories:
+        size = directory.calc_size()
+        if size <= 100000:
+            running_sum += size
+    return running_sum
+
+
     print(root.pprint())
 
 def test_graph():
@@ -129,4 +147,5 @@ def test_graph():
     print(a.calc_size())
 
 if __name__ == "__main__":
-    main()
+    running_sum = get_sum_of_small_directories()
+    print(f"Sum small directories: {running_sum}")
