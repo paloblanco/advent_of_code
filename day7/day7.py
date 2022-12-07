@@ -45,13 +45,20 @@ class Directory(Node):
         return self.__str__()
 
     def pprint(self, indent=0):
-        structure=f"{'  '*indent}{self}\n"
+        structure=f"{'  '*indent}{self} :"
+        children_dir = []
+        children_file = []
         for child in self.children:
-            try:
-                structure += child.pprint(indent=indent+1)
-            except:
-                structure += f"{'  '*(indent+1)}{child}\n"
-        return structure
+            if type(child) == Directory:
+                children_dir.append(child)
+            else:
+                children_file.append(child)
+        for child in children_file:
+            structure += "*"
+        for child in children_dir:
+            structure += "\n"
+            structure += child.pprint(indent=indent+1)
+        return structure, indents
 
 
 class File(Node):
@@ -83,7 +90,7 @@ def cd(parent,child_name,root):
                 current_node = child
     return current_node
 
-def create_graph_from_text(lines):
+def create_graph_from_text(lines,draw=False):
     root = Directory('/')
     current_node = root
     for line in lines:
@@ -102,9 +109,10 @@ def create_graph_from_text(lines):
             child_present = current_node.check_if_child_exists(child_name)
             if not child_present:
                 current_node.add_child(File(child_name, size))
-        # print(root.pprint())
-        # sleep(0.025)
-        # clear()
+        if draw:
+            clear()
+            print(root.pprint())
+            sleep(0.01)
     return root
 
 def return_every_directory_as_list(root):
@@ -157,7 +165,9 @@ def test_graph():
     print(a.calc_size())
 
 if __name__ == "__main__":
-    running_sum = get_sum_of_small_directories()
-    print(f"Sum small directories: {running_sum}")
-    smallest_directory_size_to_delete = smallest_directory_to_delete()
-    print(f"Smallest directory size to delete: {smallest_directory_size_to_delete}")
+    # running_sum = get_sum_of_small_directories()
+    # print(f"Sum small directories: {running_sum}")
+    # smallest_directory_size_to_delete = smallest_directory_to_delete()
+    # print(f"Smallest directory size to delete: {smallest_directory_size_to_delete}")
+    lines = get_inputs_from_file()
+    root = create_graph_from_text(lines,draw=True)
