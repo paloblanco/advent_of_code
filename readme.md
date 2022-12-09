@@ -16,3 +16,10 @@ I am using the library [pyxel](https://github.com/kitao/pyxel) to animate some o
 ![Day 8](gifs\day8.gif)
 
 Combing the forest for trees that are visible from the outside.
+
+
+## Day 9
+
+![Day 9](gifs\day9.gif)
+
+Pulling a rope around. This one takes very long! I did not record the whole thing.

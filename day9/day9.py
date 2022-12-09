@@ -36,8 +36,8 @@ def move_rope(H,T,dx,dy):
     return H,T
     
 def init_pyxel():
-    pyxel.init(200, 200, title="AdventOfCode, Day9", fps=60, capture_scale=3, capture_sec=60)
-    pyxel.camera(-100,-100)
+    pyxel.init(300, 200, title="AdventOfCode, Day9", fps=60, capture_scale=3, capture_sec=60)
+    pyxel.camera(-50,-100)
     pyxel.cls(0)
     pyxel.flip()
 
