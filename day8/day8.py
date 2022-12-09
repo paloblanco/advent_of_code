@@ -1,16 +1,32 @@
+import pyxel
+from time import sleep
+
 DAY8_FNAME = r"day8input.txt"
+
+pyxel
+
+def refresh(x,y,text,text_h):
+    pyxel.pset(x,y,7)
+    pyxel.rect(1, text_h, 70, 10, 0)
+    pyxel.text(1,text_h,text,7)
+    pyxel.flip()
 
 def return_list_of_lists_from_file(fname: str=DAY8_FNAME) -> list[list[int]]:
     with open(fname,"r") as day8_file:
         forest = [[int(i) for i in list(each.strip())] for each in day8_file.readlines()]
     return forest
 
-def create_map_of_visibile_trees(forest: list[list[int]]) -> list[list[int]]:
+def create_map_of_visibile_trees(forest: list[list[int]], draw=False) -> list[list[int]]:
     """
     Return a list[list[int]] where each entry is 1 or 0. 1 if visible.
     """
     height = len(forest)
     width = len(forest[0])
+    if draw:
+        pyxel.init(width, height+10, title="AdventOfCode, Day8", fps=60)
+        pyxel.cls(0)
+        pyxel.flip()
+        sleep(3)
     forest_bin = [[0 for w in range(width)] for h in range(height)]
     # from the left looking right
     for r,row in enumerate(forest):
@@ -19,6 +35,7 @@ def create_map_of_visibile_trees(forest: list[list[int]]) -> list[list[int]]:
             if tree > height_max_current:
                 forest_bin[r][c]=1
                 height_max_current=tree
+                if draw: refresh(c,r,"LEFT TO RIGHT",height+2)
             if height_max_current==9: break #save some time
     # from the right looking left
     for r,row in enumerate(forest):
@@ -26,6 +43,7 @@ def create_map_of_visibile_trees(forest: list[list[int]]) -> list[list[int]]:
         for c,tree in reversed(list(enumerate(row))):
             if tree > height_max_current:
                 forest_bin[r][c]=1
+                if draw: refresh(c,r,"RIGHT TO LEFT",height+2)
                 height_max_current=tree
             if height_max_current==9: break #save some time
     # from the top looking down
@@ -35,6 +53,7 @@ def create_map_of_visibile_trees(forest: list[list[int]]) -> list[list[int]]:
             tree = forest[r][c]
             if tree > height_max_current:
                 forest_bin[r][c]=1
+                if draw: refresh(c,r,"TOP TO BOTTOM",height+2)
                 height_max_current=tree
             if height_max_current==9: break #save some time
     # from the bottom looking up
@@ -44,8 +63,10 @@ def create_map_of_visibile_trees(forest: list[list[int]]) -> list[list[int]]:
             tree = forest[r][c]
             if tree > height_max_current:
                 forest_bin[r][c]=1
+                if draw: refresh(c,r,"BOTTOM TO TOP",height+2)
                 height_max_current=tree
             if height_max_current==9: break #save some time
+    if draw: pyxel.show()
     return forest_bin
 
 def sum_of_visible_trees(forest: list[list[int]]) -> int:
@@ -101,7 +122,7 @@ def get_max_score_in_forest(forest_scores: list[list[int]]) -> int:
 
 if __name__ == "__main__":
     forest = return_list_of_lists_from_file()
-    forest_bin = create_map_of_visibile_trees(forest)
+    forest_bin = create_map_of_visibile_trees(forest,draw=True)
     visible_count = sum_of_visible_trees(forest_bin)
     forest_scores = create_map_of_scenic_scores(forest)
     max_score = get_max_score_in_forest(forest_scores)
