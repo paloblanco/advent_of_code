@@ -15,6 +15,14 @@ python -m pip install pyxel==1.8.2
 I am using the library [pyxel](https://github.com/kitao/pyxel) to animate some of my solutions. Check them out below! Spoilers if you are still working on these.
 
 
+## Day 1
+
+![Day 1](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day1.gif)
+
+Not super exciting for day 1. We are basically just going through a list of numbers and keeping track of the totals until there is a line break. When we hit a line break, create a new entry and start counting again.
+
+Note tht I AM storing every single number in a list. It would be much more memory efficient to just keep track of the top N entries. Python makes it so easy to stick these things in a list though, it's hard not to.
+
 ## Day 8
 
 ![Day 8](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day8.gif)

@@ -3,8 +3,6 @@ from time import sleep
 
 DAY8_FNAME = r"day8input.txt"
 
-pyxel
-
 def refresh(x,y,text,text_h):
     pyxel.pset(x,y,7)
     pyxel.rect(1, text_h, 70, 10, 0)
