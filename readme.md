@@ -4,7 +4,11 @@ My entries for advent of code! https://adventofcode.com/
 
 Generally, you need to cd to the specific directories to run code in order for file paths to resolve correctly.
 
-No dependencies besides standard library in python.
+~~No dependencies besides standard library in python.~~ I am using pyxel to animate a lot of these now. You will need an older version which still supports the "flip" command:
+
+``` 
+python -m pip install pyxel==1.8.2
+```
 
 # Solution gifs
 
