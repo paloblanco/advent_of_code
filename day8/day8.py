@@ -23,10 +23,11 @@ def create_map_of_visibile_trees(forest: list[list[int]], draw=False) -> list[li
     height = len(forest)
     width = len(forest[0])
     if draw:
-        pyxel.init(width, height+10, title="AdventOfCode, Day8", fps=60)
+        pyxel.init(width, height+10, title="AdventOfCode, Day8", fps=60, capture_scale=3, capture_sec=60)
         pyxel.cls(0)
         pyxel.flip()
-        sleep(3)
+        sleep(1)
+
     forest_bin = [[0 for w in range(width)] for h in range(height)]
     # from the left looking right
     for r,row in enumerate(forest):
