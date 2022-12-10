@@ -2,7 +2,7 @@ import pyxel
 
 elves_fname = r"input1.txt"
 
-DRAW = True
+DRAW = False
 
 def init_pyxel():
     pyxel.init(256, 200, title="AdventOfCode, Day1", fps=60, capture_scale=3, capture_sec=60)
