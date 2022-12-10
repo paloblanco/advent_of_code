@@ -19,19 +19,32 @@ def process_instruction(instr):
     else:
         return instr,2
 
+def render_text(text_list: list[str]) -> str:
+    text_out = ""
+    for i,text in enumerate(text_list):
+        text_out = text_out + text
+        if (i+1)%40==0:
+            text_out = text_out + "\n"
+    return text_out
+
 def run_program(instructions:list, track_start=20, track_interval=40) -> int:
     cycle = 1
     X = 1
     strength_sum = 0
+    text_output = [".",]*240
     while instructions:
         next_instruction = instructions.pop()
         dX,dcycle = process_instruction(next_instruction)
         for i in range(dcycle):
+            pix = cycle-1
+            if X-1<=(pix%40)<=X+1:
+                text_output[pix]="#"
             if (cycle-track_start)%track_interval==0:
                 strength_sum += X * cycle
             cycle += 1
         X += dX
-    return strength_sum
+    text_output = render_text(text_output)
+    return strength_sum, text_output
 
 TEST_DATA = """addx 15
 addx -11
@@ -183,9 +196,13 @@ noop
 
 if __name__ == "__main__":
     instr_test = get_instructions_from_text(TEST_DATA)
-    sum_test = run_program(instr_test)
+    sum_test, text_test = run_program(instr_test)
     assert sum_test==13140 , f"Wrong, your value is {sum_test}"
+    print("Test Text:")
+    print(text_test)
 
     instr_real = get_instructions_from_text(get_text_from_file())
-    sum_real = run_program(instr_real)
+    sum_real, text_real = run_program(instr_real)
     print(f"Sum strength: {sum_real}")
+    print("Real Text:")
+    print(text_real)
