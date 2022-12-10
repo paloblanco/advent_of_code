@@ -35,3 +35,9 @@ Combing the forest for trees that are visible from the outside.
 ![Day 9](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day9.gif)
 
 Pulling a rope around. This one takes very long! I did not record the whole thing.
+
+## Day 10
+
+![Day 10](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day10.gif)
+
+Pretty easy one today. Fun one to render though!

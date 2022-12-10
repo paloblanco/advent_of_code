@@ -8,7 +8,8 @@ def init_pyxel():
     pyxel.load("my_resource.pyxres")
     pyxel.cls(0)
     pyxel.bltm(0,0,0,0,0,128,128)
-    pyxel.text(5,120,"NormGear   =====    AoC Day 10", 5)
+    pyxel.text(40,20,"AoC Day 10", 1)
+    pyxel.text(5,120,"NormGear -- CRT matrix display", 5)
     pyxel.flip()
 
 def refresh_pyxel(x,y,c):
