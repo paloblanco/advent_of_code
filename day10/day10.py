@@ -1,5 +1,25 @@
 DAY10_FNAME = r"day10input.txt"
 
+
+import pyxel
+
+def init_pyxel():
+    pyxel.init(128, 128, title="AdventOfCode, Day10", fps=30, capture_scale=3, capture_sec=60)
+    pyxel.load("my_resource.pyxres")
+    pyxel.cls(0)
+    pyxel.bltm(0,0,0,0,0,128,128)
+    pyxel.text(5,120,"NormGear   =====    AoC Day 10", 5)
+    pyxel.flip()
+
+def refresh_pyxel(x,y,c):
+    offx = 20
+    offy = 40
+    scale = 2
+    px = x*scale + offx
+    py = y*scale + offy
+    pyxel.rect(px,py,scale,scale,c)
+    pyxel.flip()
+
 def get_text_from_file(fname: str=DAY10_FNAME) -> str:
     with open(fname,"r") as f:
         return f.read()
@@ -22,12 +42,18 @@ def process_instruction(instr):
 def render_text(text_list: list[str]) -> str:
     text_out = ""
     for i,text in enumerate(text_list):
+        if DRAW:
+            drawx = i%40
+            drawy = i//40
+            color = 1 if text=="." else 6
+            refresh_pyxel(drawx,drawy,color)
         text_out = text_out + text
         if (i+1)%40==0:
             text_out = text_out + "\n"
     return text_out
 
 def run_program(instructions:list, track_start=20, track_interval=40) -> int:
+    if DRAW: init_pyxel()
     cycle = 1
     X = 1
     strength_sum = 0
@@ -195,14 +221,17 @@ noop
 """
 
 if __name__ == "__main__":
+    DRAW=False
     instr_test = get_instructions_from_text(TEST_DATA)
     sum_test, text_test = run_program(instr_test)
     assert sum_test==13140 , f"Wrong, your value is {sum_test}"
     print("Test Text:")
     print(text_test)
 
+    DRAW=True
     instr_real = get_instructions_from_text(get_text_from_file())
     sum_real, text_real = run_program(instr_real)
     print(f"Sum strength: {sum_real}")
     print("Real Text:")
     print(text_real)
+    if DRAW: pyxel.show()
