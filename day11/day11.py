@@ -1,8 +1,59 @@
 from dataclasses import dataclass
 from collections import deque
+import pyxel
 
 TEST_NAME = "day11inputtest.txt"
 INPUT_NAME = "day11input.txt"
+
+def init_pyxel():
+    pyxel.init(128, 128, title="AdventOfCode, Day11", fps=60, capture_scale=3, capture_sec=60)
+    pyxel.load("my_resource.pyxres")
+    pyxel.cls(0)
+    draw_background()
+    pyxel.flip()
+
+def draw_background():
+    pyxel.cls(0)
+    pyxel.bltm(0,0,0,128,0,128,128,0)
+    pyxel.bltm(0,0,0,0,0,128,128,0)
+    pyxel.text(40,16,"AoC Day 11", 1)
+    pyxel.text(5,120,"NormGear -- CRT matrix display", 5)
+
+def refresh(monkey_list, from_ix, to_ix, throw=False):
+    draw_background()
+    for m in monkey_list:
+        xp = 16+8*m.index + 8*(m.index//2)
+        yp = 7*8 + (m.index%2) * 16
+        for ix,e in enumerate(m.items):
+            pyxel.text(xp,yp+ ix*6,str(e),1)
+    for i in range(10): 
+        pyxel.flip()
+    if not throw: 
+        return
+    xball = 16+8*from_ix + 8*(from_ix//2)
+    yball = 6*8 + (from_ix%2) * 16
+    xto = 16+8*to_ix + 8*(to_ix//2)
+    yto = 6*8 + (to_ix%2) * 16
+    dy = -2.25
+    dx = (xto-xball)/60
+    pyxel.circ(xball,yball,3,6)
+    pyxel.circb(xball,yball,3,1)
+    pyxel.flip()
+    loopcount=0
+    while abs(xball-xto) + abs(yball-yto) > 6:
+        xball += dx
+        yball += dy
+        dy += 0.075
+        loopcount+=1
+        draw_background()
+        for m in monkey_list:
+            xp = 16+8*m.index + 8*(m.index//2)
+            yp = 7*8 + (m.index%2) * 16
+            for ix,e in enumerate(m.items):
+                pyxel.text(xp,yp+ ix*6,str(e),1)
+        pyxel.circ(xball,yball,3,6)
+        pyxel.circb(xball,yball,3,1)
+        pyxel.flip()
 
 
 @dataclass
@@ -25,13 +76,14 @@ class Monkey:
         item = item // self.worry_reduction
         self.inspections += 1
         item = item%self.common_factor
-        if item % self.test_divisible == 0:
-            monkey_list[self.throw_to_true].add_item(item)
-        else:
-            monkey_list[self.throw_to_false].add_item(item)
+        throw_to = self.throw_to_true if item % self.test_divisible else self.throw_to_false
+        if DRAW: refresh(monkey_list,self.index,throw_to,throw=True)
+        monkey_list[throw_to].add_item(item)
+        if DRAW: refresh(monkey_list,self.index,throw_to,throw=False)
 
     def take_my_turn(self, monkey_list: list[type('Monkey')]):
         while self.items:
+            if DRAW: refresh(monkey_list,self.index,-1,throw=False)
             item_current = self.items.popleft()
             self.process_item(item_current, monkey_list)
 
@@ -104,7 +156,7 @@ def problem_two(fname=TEST_NAME, rounds=10000):
     monkeys.sort()
     return monkeys[-1].inspections * monkeys[-2].inspections
 
-if __name__ == "__main__":
+def main():
     monkey_business_one_test = problem_one()
     assert monkey_business_one_test == 10605, f"{monkey_business_one_test =}"
     monkey_business_one = problem_one(INPUT_NAME)
@@ -115,5 +167,20 @@ if __name__ == "__main__":
 
     monkey_business_two = problem_two(INPUT_NAME)
     print(f"Monkey business part 2: {monkey_business_two}")
+
+def main_draw():
+    monkey_business_one = problem_one(INPUT_NAME)
+    print(f"Monkey business part 1: {monkey_business_one}")
+
+if __name__ == "__main__":
+    DRAW=True
+
+    if not DRAW:
+        main()
+    
+    else:
+        init_pyxel()
+        main_draw()
+        
 
 
