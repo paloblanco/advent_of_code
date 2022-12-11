@@ -12,21 +12,23 @@ class Monkey:
     test_divisible: int
     throw_to_true: int
     throw_to_false: int
-    operation: callable  = lambda x: x
+    operation: callable
+    inspections: int = 0
 
     def add_item(self,item):
         self.items.append(item)
 
     def process_item(self, item: int, monkey_list: list[type('Monkey')]):
-        item = operation(item)
+        item = self.operation(item)
         item = item//3
-        if item % test_divisible == 0:
-            monkey_list[throw_to_true].add_item(item)
+        self.inspections += 1
+        if item % self.test_divisible == 0:
+            monkey_list[self.throw_to_true].add_item(item)
         else:
-            monkey_list[throw_to_false].add_item(item)
+            monkey_list[self.throw_to_false].add_item(item)
 
     def take_my_turn(self, monkey_list: list[type('Monkey')]):
-        while self.items():
+        while self.items:
             item_current = self.items.popleft()
             self.process_item(item_current, monkey_list)
 
@@ -35,6 +37,9 @@ class Monkey:
 
     def __repr__(self):
         return self.__str__()
+
+    def __lt__(self,other):
+        return self.inspections < other.inspections
 
 
 def get_monkeys_from_file(fname: str = INPUT_NAME) -> list[Monkey]:
@@ -47,9 +52,15 @@ def get_monkeys_from_file(fname: str = INPUT_NAME) -> list[Monkey]:
         items = [int(each) for each in items_line.split(",")]
         oper, num = lines.popleft().split(" ")[-2:]
         if oper == "+": 
-            operation = lambda x: x + num
+            if num == 'old':
+                operation = lambda x: x + x
+            else:
+                operation = (lambda num: (lambda x: x + int(num)))(num)
         if oper == "*": 
-            operation = lambda x: x * num
+            if num == "old":
+                operation = lambda x: x * x
+            else:
+                operation = (lambda num: (lambda x: x * int(num)))(num)
         test = int(lines.popleft().split(" ")[-1])
         throw_true = int(lines.popleft().split(" ")[-1])
         throw_false = int(lines.popleft().split(" ")[-1])
@@ -58,7 +69,7 @@ def get_monkeys_from_file(fname: str = INPUT_NAME) -> list[Monkey]:
         except: pass
         monkey = Monkey(
             index=monkey_ix,
-            items=items,
+            items=deque(items),
             test_divisible=test,
             throw_to_true=throw_true,
             throw_to_false=throw_false,
@@ -66,11 +77,20 @@ def get_monkeys_from_file(fname: str = INPUT_NAME) -> list[Monkey]:
         monkey_list.append(monkey)
     return monkey_list
 
+def problem_one(fname=TEST_NAME, rounds=20):
+    monkeys = get_monkeys_from_file(fname)
+    for i in range(rounds):
+        for m in range(len(monkeys)):
+            monkeys[m].take_my_turn(monkeys)
+    monkeys.sort()
+    return monkeys[-1].inspections * monkeys[-2].inspections
+
 
 if __name__ == "__main__":
-    monkeys = get_monkeys_from_file(TEST_NAME)
-    for monkey in monkeys:
-        print(monkey)
+    monkey_business_one_test = problem_one()
+    assert monkey_business_one_test == 10605
+    monkey_business_one = problem_one(INPUT_NAME)
+    print(f"Monkey business part 1: {monkey_business_one}")
 
 
 
