@@ -35,15 +35,15 @@ def refresh(monkey_list, from_ix, to_ix, throw=False):
     xto = 16+8*to_ix + 8*(to_ix//2)
     yto = 6*8 + (to_ix%2) * 16
     dy = -2.25
-    dx = (xto-xball)/60
+    dx = (xto-xball)/6
     pyxel.circ(xball,yball,3,6)
     pyxel.circb(xball,yball,3,1)
     pyxel.flip()
     loopcount=0
-    while abs(xball-xto) + abs(yball-yto) > 6:
+    while loopcount < 6:
         xball += dx
         yball += dy
-        dy += 0.075
+        dy += 0.75
         loopcount+=1
         draw_background()
         for m in monkey_list:
