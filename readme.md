@@ -41,3 +41,9 @@ Pulling a rope around. This one takes very long! I did not record the whole thin
 ![Day 10](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day10.gif)
 
 Pretty easy one today. Fun one to render though!
+
+## Day 11
+
+![Day 11](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day11.gif)
+
+One round of passing. This one took a while to solve!
