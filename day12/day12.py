@@ -1,11 +1,76 @@
 from heapq import heappush,heappop
 from collections import deque
 from dataclasses import dataclass, field
-from typing import Any
 
+import pyxel
 
 INPUT_NAME = r"day12input.txt"
 TEST_NAME = r"day12input_test.txt"
+
+def init_pyxel():
+    pyxel.init(200, 128, title="AdventOfCode, Day12", fps=60, capture_scale=3, capture_sec=60)
+    pyxel.load("my_resource.pyxres")
+    pyxel.cls(0)
+    # draw_background()
+    pyxel.colors.from_list([0x000000,
+        0x0f1417,
+        0x1c2023,
+        0x282d30,
+        0x363a3e,
+        0x43484b,
+        0x51565a,
+        0x606568,
+        0x6f7478,
+        0x7e8387,
+        0x8e9397,
+        0x9da3a7,
+        0xaeb3b7,
+        0xbec4c8,
+        0xcfd5d9,
+        0xf1f11f,
+        ])
+    pyxel.flip()
+
+def draw_background():
+    pyxel.cls(0)
+    pyxel.bltm(0,0,0,0,0,128,128,0)
+    pyxel.text(40,16,"AoC Day 12", 1)
+    pyxel.text(5,120,"NormGear -- CRT matrix display", 5)
+
+    # pyxel.colors[0] = 0x000000
+    # pyxel.colors[1] = 0x0f1417
+    # pyxel.colors[2] = 0x1c2023
+    # pyxel.colors[3] = 0x282d30
+    # pyxel.colors[4] = 0x363a3e
+    # pyxel.colors[5] = 0x43484b
+    # pyxel.colors[6] = 0x51565a
+    # pyxel.colors[7] = 0x606568
+    # pyxel.colors[8] = 0x6f7478
+    # pyxel.colors[9] = 0x7e8387
+    # pyxel.colors[10] = 0x8e9397
+    # pyxel.colors[11] = 0x9da3a7
+    # pyxel.colors[12] = 0xaeb3b7
+    # pyxel.colors[13] = 0xbec4c8
+    # pyxel.colors[14] = 0xcfd5d9
+    # pyxel.colors[15] = 0xf1f11f
+
+def refresh(map,list_highlight,c=15,count=1, text = "Drawing A* Exploration Bound"):
+    # draw_background()
+    pyxel.rect(70,16,80,30,0)
+    pyxel.text(70,16,"AoC Day 12", 14)
+    pyxel.text(40,26,text, 15)
+    colors = [0,1,2,5,3,13,11,15]
+    startx=30
+    starty=40
+    h=len(map)
+    w=len(map[0])
+    pyxel.rectb(startx-1,starty-1,2*w+2,2*h+2,7)
+    for r,row in enumerate(map):
+        for col,val in enumerate(row):
+            pyxel.rect(startx+col*2,starty+r*2,2,2,int((val-97)*8/15.1))
+    for x,y in list_highlight:
+        pyxel.rect(startx+x*2,starty+y*2,2,2,c)
+    for i in range(count): pyxel.flip()
 
 @dataclass
 class Node:
@@ -104,7 +169,11 @@ class MapGraph:
             frontier.push(node)
             node.to_me = current_node
             explored[node.index] = node.steps_to_me
+        if DRAW: refresh(self._map,[],7,count=20)
         while frontier._container:
+            if DRAW: 
+                draw_list = [(each.column, each.row) for each in frontier._container]
+                refresh(self._map,draw_list,c=15)
             current_node = frontier.pop()
             if current_node.index == self.end:
                 return current_node
@@ -133,11 +202,18 @@ class MapGraph:
         if finish:
             parent = finish.to_me
             steps=0
+            path=[]
+            path.append((parent.column,parent.row))
+            if DRAW: refresh(self._map,path,c=15, count=20, text="Drawing optimal Solution")
             while parent:
+                if DRAW:
+                    refresh(self._map,path,c=15, text="Drawing optimal Solution")
                 parent = parent.to_me
                 steps+=1
+                if parent: path.append((parent.column,parent.row))
             if show:
                 self._print_solution(finish)
+            if DRAW: pyxel.show()
             return steps
         else:
             return None
@@ -193,16 +269,19 @@ def part_2(fname=TEST_NAME):
 
 
 if __name__ == "__main__":
-    assert part_1() == 31
+    # assert part_1() == 31
 
+    DRAW = True
+    if DRAW:
+        init_pyxel()
     steps_1 = part_1(INPUT_NAME)
     print(f"{steps_1 =}")
 
-    part2test = part_2()
-    assert part2test == 29
+    # part2test = part_2()
+    # assert part2test == 29
 
-    steps_2 = part_2(INPUT_NAME)
-    print(f"{steps_2 =}")
+    # steps_2 = part_2(INPUT_NAME)
+    # print(f"{steps_2 =}")
 
     
 

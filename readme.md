@@ -47,3 +47,9 @@ Pretty easy one today. Fun one to render though!
 ![Day 11](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day11.gif)
 
 One round of passing. This one took a while to solve!
+
+## Day 12
+
+![Day 12](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day12.gif)
+
+A* to find a path up the mountain. BFS is probably quicker just in terms of coding things up, but I wanted to practice doing an A* search.
