@@ -53,3 +53,7 @@ One round of passing. This one took a while to solve!
 ![Day 12](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day12.gif)
 
 A* to find a path up the mountain. BFS is probably quicker just in terms of coding things up, but I wanted to practice doing an A* search.
+
+![Day 12 BFS](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day12_bfs.gif)
+
+Just by switching out our Priority Queue with a regular queue, we get BFS search.

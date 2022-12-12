@@ -56,7 +56,7 @@ def draw_background():
 
 def refresh(map,list_highlight,c=15,count=1, text = "Drawing A* Exploration Bound"):
     # draw_background()
-    pyxel.rect(70,16,80,30,0)
+    pyxel.rect(70,16,100,30,0)
     pyxel.text(70,16,"AoC Day 12", 14)
     pyxel.text(40,26,text, 15)
     colors = [0,1,2,5,3,13,11,15]
