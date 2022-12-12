@@ -15,15 +15,7 @@ class Node:
     heuristic: callable
     next_steps: list['Node'] = field(default_factory=list)
     to_me: 'Node' = None # path taken to me
-
-    @property
-    def steps_to_me(self):
-        steps_here = 0
-        parent = self.to_me
-        while parent:
-            steps_here+=1
-            parent=parent.to_me
-        return steps_here
+    steps_to_me: int = 0
 
     @property
     def index(self):
@@ -76,24 +68,7 @@ class MapGraph:
 
     def __post_init__(self):
         self.nodes = []
-        self.heuristic = return_heuristic_calc(self.start, self.end)
-        # make map of nodes
-        # for r,row in enumerate(self._map):
-        #     node_row = []
-        #     for c,height in enumerate(row):
-        #         node_here = Node(height, r, c, self.heuristic)
-        #         node_row.append(node_here)
-        #     self.nodes.append(node_row)
-        # # connect nodes
-        # for r,row in enumerate(self.nodes):
-        #     for c, node in enumerate(row):
-        #         other_nodes = []
-        #         if r > 0: other_nodes.append(self.nodes[r-1][c])
-        #         if r < len(self.nodes) - 1: other_nodes.append(self.nodes[r+1][c])
-        #         if c > 0: other_nodes.append(self.nodes[r][c - 1])
-        #         if c < len(row) - 1: other_nodes.append(self.nodes[r][c + 1])
-        #         for other_node in other_nodes:
-        #             node.check_and_add_next_step(other_node)
+        self.heuristic = return_heuristic_calc(self.end)
 
     def print_map(self):
         for row in self._map:
@@ -107,22 +82,23 @@ class MapGraph:
         r,c = current_node.index
         possible_steps = []
         if r > 0 and self._map[r-1][c] <= current_node.height + 1:
-            possible_steps.append(Node(self._map[r-1][c],r-1,c,self.heuristic))
+            possible_steps.append(self.make_node_from_map(r-1,c))
         if r < len(self._map)-1 and self._map[r+1][c] <= current_node.height + 1:
-            possible_steps.append(Node(self._map[r+1][c],r+1,c,self.heuristic))
+            possible_steps.append(self.make_node_from_map(r+1,c))
         if c > 0 and self._map[r][c-1] <= current_node.height + 1:
-            possible_steps.append(Node(self._map[r][c-1],r,c-1,self.heuristic))
+            possible_steps.append(self.make_node_from_map(r,c-1))
         if c < len(self._map[0])-1 and self._map[r][c+1] <= current_node.height + 1:
-            possible_steps.append(Node(self._map[r][c+1],r,c+1,self.heuristic))
+            possible_steps.append(self.make_node_from_map(r,c+1))
+        for n in possible_steps:
+            n.steps_to_me = current_node.steps_to_me + 1
         return possible_steps
     
     def astar(self):
-        frontier = Queue()
+        frontier = PQueue()
         explored = set()
         self.path = []
         start_node = self.make_node_from_map(self.start[0],self.start[1])#self.nodes[self.start[0]][self.start[1]]
         explored.add(start_node.index)
-        # end_node = self.nodes[self.end[0]][self.end[1]]
         current_node = start_node
         for node in self.get_next_steps(current_node):
             frontier.push(node)
@@ -167,16 +143,12 @@ class MapGraph:
             return None
 
 
-def return_heuristic_calc(start: tuple[int,int],end: tuple[int,int]) -> callable:
-    startrow = start[0]
-    startcol = start[1]
+def return_heuristic_calc(end: tuple[int,int]) -> callable:
     endrow = end[0]
     endcol = end[1]
     def heuristic_calc(row,column,steps) -> int:
-        manhattan_0 = abs(row - startrow) + abs(column - startcol)
         manhattan_1 = abs(endrow - row) + abs(endcol - column)
-        # return manhattan_0 + manhattan_1    
-        return steps #+ manhattan_1    
+        return steps + manhattan_1    
     return heuristic_calc
 
 
