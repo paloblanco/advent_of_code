@@ -78,22 +78,22 @@ class MapGraph:
         self.nodes = []
         self.heuristic = return_heuristic_calc(self.start, self.end)
         # make map of nodes
-        for r,row in enumerate(self._map):
-            node_row = []
-            for c,height in enumerate(row):
-                node_here = Node(height, r, c, self.heuristic)
-                node_row.append(node_here)
-            self.nodes.append(node_row)
-        # connect nodes
-        for r,row in enumerate(self.nodes):
-            for c, node in enumerate(row):
-                other_nodes = []
-                if r > 0: other_nodes.append(self.nodes[r-1][c])
-                if r < len(self.nodes) - 1: other_nodes.append(self.nodes[r+1][c])
-                if c > 0: other_nodes.append(self.nodes[r][c - 1])
-                if c < len(row) - 1: other_nodes.append(self.nodes[r][c + 1])
-                for other_node in other_nodes:
-                    node.check_and_add_next_step(other_node)
+        # for r,row in enumerate(self._map):
+        #     node_row = []
+        #     for c,height in enumerate(row):
+        #         node_here = Node(height, r, c, self.heuristic)
+        #         node_row.append(node_here)
+        #     self.nodes.append(node_row)
+        # # connect nodes
+        # for r,row in enumerate(self.nodes):
+        #     for c, node in enumerate(row):
+        #         other_nodes = []
+        #         if r > 0: other_nodes.append(self.nodes[r-1][c])
+        #         if r < len(self.nodes) - 1: other_nodes.append(self.nodes[r+1][c])
+        #         if c > 0: other_nodes.append(self.nodes[r][c - 1])
+        #         if c < len(row) - 1: other_nodes.append(self.nodes[r][c + 1])
+        #         for other_node in other_nodes:
+        #             node.check_and_add_next_step(other_node)
 
     def print_map(self):
         for row in self._map:
@@ -226,11 +226,11 @@ if __name__ == "__main__":
     steps_1 = part_1(INPUT_NAME)
     print(f"{steps_1 =}")
 
-    part2test = part_2()
-    assert part2test == 29
+    # part2test = part_2()
+    # assert part2test == 29
 
-    steps_2 = part_2(INPUT_NAME)
-    print(f"{steps_2 =}")
+    # steps_2 = part_2(INPUT_NAME)
+    # print(f"{steps_2 =}")
 
     
 
