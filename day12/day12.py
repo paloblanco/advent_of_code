@@ -95,25 +95,25 @@ class MapGraph:
     
     def astar(self):
         frontier = PQueue()
-        explored = set()
+        explored = dict()
         self.path = []
         start_node = self.make_node_from_map(self.start[0],self.start[1])#self.nodes[self.start[0]][self.start[1]]
-        explored.add(start_node.index)
+        explored[start_node.index] = start_node.steps_to_me
         current_node = start_node
         for node in self.get_next_steps(current_node):
             frontier.push(node)
             node.to_me = current_node
-            explored.add(node.index)
+            explored[node.index] = node.steps_to_me
         while frontier._container:
             current_node = frontier.pop()
             if current_node.index == self.end:
                 return current_node
             else:
                 for node in self.get_next_steps(current_node):
-                    if node.index in explored: continue
-                    frontier.push(node)
-                    node.to_me = current_node
-                    explored.add(node.index)
+                    if node.index not in explored or explored[node.index] > node.steps_to_me:
+                        frontier.push(node)
+                        node.to_me = current_node
+                        explored[node.index] = node.steps_to_me
         return None
 
     def _print_solution(self, last_node: Node):
@@ -198,11 +198,11 @@ if __name__ == "__main__":
     steps_1 = part_1(INPUT_NAME)
     print(f"{steps_1 =}")
 
-    # part2test = part_2()
-    # assert part2test == 29
+    part2test = part_2()
+    assert part2test == 29
 
-    # steps_2 = part_2(INPUT_NAME)
-    # print(f"{steps_2 =}")
+    steps_2 = part_2(INPUT_NAME)
+    print(f"{steps_2 =}")
 
     
 
