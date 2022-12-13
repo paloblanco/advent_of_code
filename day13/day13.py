@@ -81,7 +81,7 @@ def part1(fname=TEST_NAME) -> int:
     packet_list = get_inputs(fname)
     correct_pairs = []
     for ix,(left,right) in enumerate(packet_list):
-        printme=True
+        printme=False
         # if ix+1 not in [2, 5, 9, 13, 14, 16, 19, 20, 23, 24, 25, 27, 30, 31, 32, 33, 34, 35, 43, 44, 50, 53, 55, 56, 58, 60, 63, 67, 68, 69, 70, 71, 72, 74, 75, 76, 80, 82, 86, 88, 89, 90, 94, 95, 96, 97, 104, 105, 106, 109, 110, 111, 112, 114, 115, 122, 125, 126, 127, 128, 129, 134, 135, 136, 139, 140, 146, 147, 148, 149]: printme=True
         if printme:
             print(f"------------------------------------------")
@@ -94,10 +94,7 @@ def part1(fname=TEST_NAME) -> int:
     return correct_pairs
 
 if __name__ == "__main__":
-    # packet_list = get_inputs()
-    # for each in packet_list:
-    #     print(each)
-    
+   
     pairs_ok_test = part1()
     print(f"{pairs_ok_test =}")
 
