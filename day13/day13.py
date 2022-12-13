@@ -26,21 +26,31 @@ class Queue:
     def __repr__(self) -> str:
         return self.__str__()
 
+def queue_from_line(line: str):
+    return Queue(eval(line))
 
 def get_inputs(fname: str=TEST_NAME):
     input_pairs = []
     with open(fname,"r") as input_file:
         for line in input_file:
-            left = Queue(eval(line.strip()))
+            left = line.strip()
             line = next(input_file)
-            right = Queue(eval(line.strip()))
+            right = line.strip()
             input_pairs.append([left,right])
             try:
                 next(input_file).strip() # throw away blank
             except: 
-                break
-            
+                break  
     return input_pairs
+
+def get_inputs_part2(fname: str=TEST_NAME):
+    inputs = []
+    with open(fname,"r") as input_file:
+        for line in input_file:
+            line = line.strip()
+            if line:
+                inputs.append(line)
+    return inputs
 
 def check_order(left: Union[int,Queue],right: Union[int,Queue], show=False) -> Union[bool,str]:
     while (not left.empty) and (not right.empty): #need to check every value
@@ -76,8 +86,39 @@ def check_order(left: Union[int,Queue],right: Union[int,Queue], show=False) -> U
         if show: print(f"Left is empty, True")
         return True
 
+@dataclass
+class Packet:
+    _str: str
 
-def part1(fname=TEST_NAME) -> int:
+    def __lt__(self,other):
+        mypack = queue_from_line(self._str)
+        otherpack = queue_from_line(other._str)
+        if check_order(mypack,otherpack):
+            return True
+        else:
+            return False
+
+    def __str__(self):
+        return self._str
+
+    def __repr__(self):
+        return self._str
+
+
+def part2(fname=TEST_NAME) -> int:
+    packets = get_inputs_part2(fname)
+    packets.append('[[2]]')
+    packets.append('[[6]]')
+    packets = [Packet(each) for each in packets]
+    packets.sort()
+    ix_locs = []
+    ix_needed = ['[[2]]','[[6]]']
+    for i,P in enumerate(packets):
+        if P._str in ix_needed:
+            ix_locs.append(i+1)
+    return ix_locs[0] * ix_locs[1]
+
+def part1(fname=TEST_NAME) -> list[int]:
     packet_list = get_inputs(fname)
     correct_pairs = []
     for ix,(left,right) in enumerate(packet_list):
@@ -88,7 +129,7 @@ def part1(fname=TEST_NAME) -> int:
             print(f"INDEX: {ix}")
             print(left)
             print(right)
-        if result := check_order(left,right,show=printme):
+        if result := check_order(queue_from_line(left),queue_from_line(right),show=printme):
             correct_pairs.append(ix+1)
         if printme: print(result)
     return correct_pairs
@@ -102,3 +143,9 @@ if __name__ == "__main__":
     part1_sum = sum(part1_pairs)
     # print(part1_pairs)
     print(f"{part1_sum =}")
+
+    part2_test = part2()
+    assert part2_test==140, f"{part2_test=}"
+
+    part2_real = part2(INPUT_NAME)
+    print(f"{part2_real=}")
