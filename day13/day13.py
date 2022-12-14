@@ -102,7 +102,7 @@ class Packet:
         return self._str
 
     def __repr__(self):
-        return self._str
+        return self.__str__()
 
 
 def part2(fname=TEST_NAME) -> int:
