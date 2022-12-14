@@ -85,10 +85,54 @@ def part1(fname=TEST_NAME):
     draw_map(map,b)
     return settled_sand                
 
+def part2(fname=TEST_NAME):
+    tuples = get_tuples_from_file(fname)
+    map,b = make_map_from_tuples(tuples)
+    draw_map(map,b)
+    settled_sand = 0
+    dead_sand=False
+    while not dead_sand: #break out when sand is gone
+        xsand = 500
+        ysand = 0
+        if map[(xsand,ysand)]==3: break
+        while True:
+            # draw_map(map,b)
+            map[(xsand,ysand)]=0
+            
+            # input()
+            ysand += 1
+            if map[(xsand,ysand)] > 0:
+                xsand += -1
+                if map[(xsand,ysand)] > 0:
+                    xsand += 2
+                    if map[(xsand,ysand)] > 0:
+                        xsand += -1
+                        ysand += -1
+                        map[(xsand,ysand)] = 3
+                        settled_sand += 1
+                        break
+            map[(xsand,ysand)]=2
+            # if ysand >= b[3] or xsand < b[0] or xsand > b[2]:
+            if ysand >= b[3] + 1:
+                map[(xsand,ysand)] = 3
+                settled_sand += 1
+                break
+    xall = [x for (x,y) in map.keys()]
+    yall = [y for (x,y) in map.keys()]
+    b = [min(xall),min(yall),max(xall),max(yall)]
+    draw_map(map,b)
+    return settled_sand
+
 
 if __name__ == "__main__":
     sand_count_test = part1()
     print(f"{sand_count_test=}")
 
-    sand_count_part1 = part1(INPUT_NAME)
-    print(f"{sand_count_part1=}")
+    # sand_count_part1 = part1(INPUT_NAME)
+    # print(f"{sand_count_part1=}")
+
+    sand_count_test2 = part2()
+    print(f"{sand_count_test2=}")
+
+    sand_count_part2 = part2(INPUT_NAME)
+    print(f"{sand_count_part2=}")
