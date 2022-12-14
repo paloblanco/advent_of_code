@@ -1,5 +1,4 @@
 from collections import defaultdict
-from dataclasses import dataclass, field
 
 TEST_NAME = "day14input_test.txt"
 INPUT_NAME = "day14input.txt"
@@ -61,11 +60,8 @@ def part1(fname=TEST_NAME):
     while not dead_sand: #break out when sand is gone
         xsand = 500
         ysand = 0
-        while True:
-            # draw_map(map,b)
+        while True: # break when sand settles or sand is dead (out of bounds)
             map[(xsand,ysand)]=0
-            
-            # input()
             ysand += 1
             if map[(xsand,ysand)] > 0:
                 xsand += -1
@@ -90,16 +86,13 @@ def part2(fname=TEST_NAME):
     map,b = make_map_from_tuples(tuples)
     draw_map(map,b)
     settled_sand = 0
-    dead_sand=False
-    while not dead_sand: #break out when sand is gone
+    while True: # break out when sand fills to top
         xsand = 500
         ysand = 0
-        if map[(xsand,ysand)]==3: break
-        while True:
-            # draw_map(map,b)
+        if map[(xsand,ysand)]==3: 
+            break
+        while True: # break out when sand settles
             map[(xsand,ysand)]=0
-            
-            # input()
             ysand += 1
             if map[(xsand,ysand)] > 0:
                 xsand += -1
@@ -112,7 +105,6 @@ def part2(fname=TEST_NAME):
                         settled_sand += 1
                         break
             map[(xsand,ysand)]=2
-            # if ysand >= b[3] or xsand < b[0] or xsand > b[2]:
             if ysand >= b[3] + 1:
                 map[(xsand,ysand)] = 3
                 settled_sand += 1
@@ -128,8 +120,8 @@ if __name__ == "__main__":
     sand_count_test = part1()
     print(f"{sand_count_test=}")
 
-    # sand_count_part1 = part1(INPUT_NAME)
-    # print(f"{sand_count_part1=}")
+    sand_count_part1 = part1(INPUT_NAME)
+    print(f"{sand_count_part1=}")
 
     sand_count_test2 = part2()
     print(f"{sand_count_test2=}")
