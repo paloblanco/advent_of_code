@@ -62,10 +62,10 @@ def part1(fname=TEST_NAME):
         xsand = 500
         ysand = 0
         while True:
-            draw_map(map,b)
+            # draw_map(map,b)
             map[(xsand,ysand)]=0
             
-            input()
+            # input()
             ysand += 1
             if map[(xsand,ysand)] > 0:
                 xsand += -1
@@ -87,6 +87,8 @@ def part1(fname=TEST_NAME):
 
 
 if __name__ == "__main__":
-    sand_count = part1()
-    print(f"{sand_count=}")
+    sand_count_test = part1()
+    print(f"{sand_count_test=}")
 
+    sand_count_part1 = part1(INPUT_NAME)
+    print(f"{sand_count_part1=}")
