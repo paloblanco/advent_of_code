@@ -1,7 +1,29 @@
 from collections import defaultdict
+import pyxel
 
 TEST_NAME = "day14input_test.txt"
 INPUT_NAME = "day14input.txt"
+
+def init_pyxel():
+    pyxel.init(120, 200, title="AdventOfCode, Day 14", fps=1220, capture_scale=3, capture_sec=60)
+    pyxel.cls(0)
+    pyxel.text(16,5,"Advent of Code Day 14",3)
+    pyxel.flip()
+
+def pyxel_map(map,xmin):
+    xs=24
+    ys=16
+    pyxel.rect(xs,ys,72,171,1)
+    for (x,y) in map.keys():
+        pyxel.pset(x-xmin+xs,y+ys,3)
+    pyxel.flip()
+
+def pset(x,y,xmin,c=3):
+    xs=24
+    ys=16
+    pyxel.pset(x-xmin+xs,y+ys,c)
+    pyxel.flip()
+
 
 def get_tuples_from_file(fname=TEST_NAME):
     tuple_list = []
@@ -52,16 +74,28 @@ def draw_map(map,b):
         print(row)
 
 def part1(fname=TEST_NAME):
+    framecount=0
+    modulo=2
+    msec=0
     tuples = get_tuples_from_file(fname)
     map,b = make_map_from_tuples(tuples)
-    draw_map(map,b)
+    if DRAW:
+        init_pyxel()
+        pyxel_map(map,b[0])
+    # draw_map(map,b)
     settled_sand = 0
     dead_sand=False
     while not dead_sand: #break out when sand is gone
         xsand = 500
         ysand = 0
+        xold=500
+        yold=0
         while True: # break when sand settles or sand is dead (out of bounds)
+            framecount = (framecount+1)%modulo
+            msec = (msec+1)%100
+            if msec==0: modulo += 1
             map[(xsand,ysand)]=0
+            if DRAW and framecount==1: pset(xold,yold,b[0],1)
             ysand += 1
             if map[(xsand,ysand)] > 0:
                 xsand += -1
@@ -72,13 +106,20 @@ def part1(fname=TEST_NAME):
                         ysand += -1
                         map[(xsand,ysand)] = 3
                         settled_sand += 1
+                        if DRAW: pset(xsand,ysand,b[0],15)
                         break
             map[(xsand,ysand)]=2
+            if DRAW and framecount==0: 
+                pset(xsand,ysand,b[0],15)
+                xold=xsand
+                yold=ysand
             if ysand >= b[3] or xsand < b[0] or xsand > b[2]:
                 dead_sand = True
                 print(f"Dead sand {(xsand, ysand)}  {b}")
                 break
-    draw_map(map,b)
+    # draw_map(map,b)
+    print(b)
+    if DRAW: pyxel.show()
     return settled_sand                
 
 def part2(fname=TEST_NAME):
@@ -117,14 +158,15 @@ def part2(fname=TEST_NAME):
 
 
 if __name__ == "__main__":
-    sand_count_test = part1()
-    print(f"{sand_count_test=}")
+    # sand_count_test = part1()
+    # print(f"{sand_count_test=}")
 
+    DRAW=True
     sand_count_part1 = part1(INPUT_NAME)
     print(f"{sand_count_part1=}")
 
-    sand_count_test2 = part2()
-    print(f"{sand_count_test2=}")
+    # sand_count_test2 = part2()
+    # print(f"{sand_count_test2=}")
 
-    sand_count_part2 = part2(INPUT_NAME)
-    print(f"{sand_count_part2=}")
+    # sand_count_part2 = part2(INPUT_NAME)
+    # print(f"{sand_count_part2=}")
