@@ -87,12 +87,15 @@ def part2(fname=TEST_NAME, limit: int = 20):
     sensors = {(each[0][0],each[0][1]) for each in t}
     beacons = {(each[1][0],each[1][1]) for each in t}
     sensors_with_radii = return_sensors_with_radii(t)
+    xb,yb = -1,-1
     for y in range(limit+1):
         ranges = excluded_ranges_for_row(sensors_with_radii,y)
-        for i,(x0,x1) in ranges[1:]:
-            if x0-1 > range[i-1][1]:
-                return x0-1,y
-    return False
+        for i,(x0,x1) in enumerate(ranges[1:]):
+            if x0-1 > ranges[i][1]:
+                xb,yb = x0-1,y
+                break
+        if xb != -1: break
+    return xb*4000000 + yb
     
 
 if __name__ == "__main__":
@@ -103,4 +106,7 @@ if __name__ == "__main__":
     print(f"{part1_solve =}") # 4254101 too low
 
     p2test = part2()
-    print(f"{p2test}=")
+    print(f"{p2test=}")
+
+    p2 = part2(INPUT_NAME,limit=4000000)
+    print(f"{p2=}")
