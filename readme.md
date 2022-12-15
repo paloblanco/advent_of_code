@@ -107,3 +107,9 @@ A* to find a path up the mountain. BFS is probably quicker just in terms of codi
 ![Day 12 BFS](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day12_bfs.gif)
 
 Just by switching out our Priority Queue with a regular queue, we get BFS search.
+
+### Day 14
+
+![Day 14](https://github.com/paloblanco/advent_of_code/blob/master/gifs/day14.gif)
+
+GREAT day to animate.

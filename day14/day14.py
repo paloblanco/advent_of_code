@@ -5,7 +5,7 @@ TEST_NAME = "day14input_test.txt"
 INPUT_NAME = "day14input.txt"
 
 def init_pyxel():
-    pyxel.init(120, 200, title="AdventOfCode, Day 14", fps=1220, capture_scale=3, capture_sec=60)
+    pyxel.init(120, 200, title="AdventOfCode, Day 14", fps=60, capture_scale=3, capture_sec=60)
     pyxel.cls(0)
     pyxel.text(16,5,"Advent of Code Day 14",3)
     pyxel.flip()
