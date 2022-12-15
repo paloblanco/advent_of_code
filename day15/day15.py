@@ -52,11 +52,56 @@ def part1(fname=TEST_NAME, ytarget: int = 10):
         if (collide(point,sensors_with_radii)) and (not point in beacons):
             exclude_count += 1
     return exclude_count
+
+def part1_alt(fname=TEST_NAME, ytarget: int = 10):
+    t,b = return_tuples_from_file(fname)
+    sensors = {(each[0][0],each[0][1]) for each in t}
+    beacons = {(each[1][0],each[1][1]) for each in t}
+    exclude_count = 0
+    sensors_with_radii = return_sensors_with_radii(t)
+    ranges = excluded_ranges_for_row(sensors_with_radii,ytarget)
+    for (x0,x1) in ranges:
+        exclude_count += x1-x0+1
+    return exclude_count
+
+def coalesce_ranges(e_r):
+    e_r = sorted(e_r,key = lambda x: x[0])
+    range_d = defaultdict(int)
+    for (x0,x1) in e_r:
+        range_d[x0] = max(range_d[x0],x1)
+    new_ranges = []
+    for ix,(x0,x1) in outer:=enumerate(e_r):
+        xstart = x0
+        xend = x1
+        for jx,xsnew,xenew in enumerate(e_r[ix:]):
+            if xsnew > xend:
+                break
+            xend = max(xend,xenew)
+            next(outer) # tik the outer loop if needed
+        new_ranges.append((xstart,xend))
+    return new_ranges
+
+def excluded_ranges_for_row(s_r,ytarg):
+    excluded_ranges = []
+    for (x,y), d in s_r.items():
+        width = abs(ytarg-y) - d
+        if width >= 0:
+            excluded_ranges.append((x-width,x+width))
+    # need to coalesce the ranges
+    fixed_ranges = coalesce_ranges(excluded_ranges)
+    return fixed_ranges
+
+
+def part2(fname=TEST_NAME, limit: int = 20):
+    t,b = return_tuples_from_file(fname)
+    sensors = {(each[0][0],each[0][1]) for each in t}
+    beacons = {(each[1][0],each[1][1]) for each in t}
+    sensors_with_radii = return_sensors_with_radii(t)
     
 
 if __name__ == "__main__":
     test1 = part1()
     print(f"{test1 =}")
 
-    part1_solve = part1(INPUT_NAME, ytarget=2000000)
-    print(f"{part1_solve =}") # 4254101 too low
+    # part1_solve = part1(INPUT_NAME, ytarget=2000000)
+    # print(f"{part1_solve =}") # 4254101 too low
