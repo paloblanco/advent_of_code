@@ -89,7 +89,10 @@ def part2(fname=TEST_NAME, limit: int = 20):
     sensors_with_radii = return_sensors_with_radii(t)
     for y in range(limit+1):
         ranges = excluded_ranges_for_row(sensors_with_radii,y)
-        print(f"{y=}  {ranges}")
+        for i,(x0,x1) in ranges[1:]:
+            if x0-1 > range[i-1][1]:
+                return x0-1,y
+    return False
     
 
 if __name__ == "__main__":
@@ -99,4 +102,5 @@ if __name__ == "__main__":
     part1_solve = part1(INPUT_NAME, ytarget=2000000)
     print(f"{part1_solve =}") # 4254101 too low
 
-    # part2()
+    p2test = part2()
+    print(f"{p2test}=")
