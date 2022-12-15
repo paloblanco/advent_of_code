@@ -54,23 +54,20 @@ def part1(fname=TEST_NAME, ytarget: int = 10):
     return exclude_count
 
 def coalesce_ranges(e_r):
-    e_r = sorted(e_r,key = lambda x: x[0])
-    range_d = defaultdict(int)
-    for (x0,x1) in e_r:
-        range_d[x0] = max(range_d[x0],x1)
+    e_r = sorted(e_r)
     new_ranges = []
     outer = enumerate(e_r)
     for ix,(x0,x1) in outer:
         xstart = x0
         xend = x1
         for jx,(xsnew,xenew) in enumerate(e_r[ix:]):
-            if xsnew > xend:
+            if xsnew > xend+1:
                 break
             xend = max(xend,xenew)
             try:
                 next(outer) # tik the outer loop if needed
             except StopIteration:
-                break
+                pass
         new_ranges.append((xstart,xend))
     return new_ranges
 
@@ -90,6 +87,9 @@ def part2(fname=TEST_NAME, limit: int = 20):
     sensors = {(each[0][0],each[0][1]) for each in t}
     beacons = {(each[1][0],each[1][1]) for each in t}
     sensors_with_radii = return_sensors_with_radii(t)
+    for y in range(limit+1):
+        ranges = excluded_ranges_for_row(sensors_with_radii,y)
+        print(f"{y=}  {ranges}")
     
 
 if __name__ == "__main__":
@@ -98,3 +98,5 @@ if __name__ == "__main__":
 
     part1_solve = part1(INPUT_NAME, ytarget=2000000)
     print(f"{part1_solve =}") # 4254101 too low
+
+    # part2()
