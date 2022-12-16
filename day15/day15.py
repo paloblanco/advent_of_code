@@ -96,17 +96,56 @@ def part2(fname=TEST_NAME, limit: int = 20):
                 break
         if xb != -1: break
     return xb*4000000 + yb
+
     
+def part2_alt(fname=INPUT_NAME, limit: int = 4000000):
+    t,b = return_tuples_from_file(fname)
+    sensors = {(each[0][0],each[0][1]) for each in t}
+    beacons = {(each[1][0],each[1][1]) for each in t}
+    sensors_with_radii = return_sensors_with_radii(t)
+    scale = 100/limit
+    xoff=0
+    yoff=0
+    while scale < .999:
+        map1 = [[1 for i in range(100)] for j in range(100)]
+        for (x,y), d in sensors_with_radii.items():
+            x,y,d = int(x*scale), int(y*scale), int(d*scale)
+            for d0 in range(-d,d+1):
+                y0 = y+d0
+                if y0<yoff or y0>yoff+99:
+                    continue
+                xmin = max(xoff, x - (d - abs(d0)))
+                xmax = min(xoff+99, x + (d - abs(d0)))
+                for x0 in range(xmin,xmax+1):
+                    map1[y0+yoff][x0+xoff]=0
+        # find the 1
+        xwin=-1
+        ywin=-1
+        for y,row in enumerate(map1):
+            for x,val in enumerate(row):
+                if val==1:
+                    xwin,ywin=x,y
+                    break
+            if xwin>-1: break
+        print(f"{xoff=}   {yoff=}   {scale=}")
+        for row in map1:
+            print(''.join([str(each) for each in row]))
+        xoff = int(xoff+xwin/scale)
+        yoff = int(yoff+ywin/scale)
+        scale *= 100
+
 
 if __name__ == "__main__":
-    test1 = part1()
-    print(f"{test1 =}")
+    # test1 = part1()
+    # print(f"{test1 =}")
 
-    part1_solve = part1(INPUT_NAME, ytarget=2000000)
-    print(f"{part1_solve =}") # 4254101 too low
+    # part1_solve = part1(INPUT_NAME, ytarget=2000000)
+    # print(f"{part1_solve =}") # 4254101 too low
 
-    p2test = part2()
-    print(f"{p2test=}")
+    # p2test = part2()
+    # print(f"{p2test=}")
 
-    p2 = part2(INPUT_NAME,limit=4000000)
-    print(f"{p2=}")
+    # p2 = part2(INPUT_NAME,limit=4000000)
+    # print(f"{p2=}") # 13784551204480 is right
+
+    part2_alt()
