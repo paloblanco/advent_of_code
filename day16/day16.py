@@ -50,10 +50,13 @@ class Graph:
             for neighbor in each[2]:
                 self.nodes[each[0]].add_neighbor(self.nodes[neighbor])
 
+    def reduce_graph(self):
+        # reduction code here
+        pass
+
     def printme(self):
         for i,v in self.nodes.items():
             print(f"{str(v)}")
-
 
 
 def read_data(fname=TEST_NAME):
@@ -71,6 +74,8 @@ def part1(fname=TEST_NAME):
     node_data = read_data(fname)
     graph0 = Graph(node_data)
     graph0.printme()
+    # todo: reduce graph0
+    # todo: exhaustively search reduced graph
     
 
 if __name__ == "__main__":
