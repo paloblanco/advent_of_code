@@ -104,11 +104,38 @@ class Graph:
             newnode = Node(oldnode.name,oldnode.value)
             self.nodes_reduced[name] = newnode
         for name in nonzero_names:
-            print(f"============{name}===========")
             travel_times = self.get_times_to_nodes(name, nonzero_names)
-            print(travel_times)
             for newname,dist in travel_times.items():
                 self.nodes_reduced[name].add_neighbor(self.nodes_reduced[newname],dist)
+
+    def crawl_graph_best_next(self, steps=30):
+        current_node = self.nodes_reduced[self.raw[0][0]]
+        nodes_visited: list[str] = [current_node.name,]
+        nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
+        nodes_remaining.remove(current_node.name)
+        valves_total: list[list[int,int]] = [] #valve + starttime
+        score = 0
+        while nodes_remaining or steps > 0:
+            best_new_score=0
+            new_name=None
+            for name,(node,dist) in current_node.neighbors.items():
+                if name in nodes_visited: continue
+                new_score = node.value*(steps-dist-1)
+                if new_score > best_new_score:
+                    best_new_score = new_score
+                    new_name=name
+            if new_name:
+                print(new_name)
+                nodes_remaining.remove(new_name)
+                nodes_visited.append(new_name)
+                new_node = self.nodes_reduced[new_name]
+                steps += - (current_node.neighbors[new_name][1] + 1) # add 1 for turn on time
+                score += new_node.value*steps
+                current_node=new_node
+            else:
+                break
+        return score
+
 
     def printme_reduced(self):
         for i,v in self.nodes_reduced.items():
@@ -136,12 +163,11 @@ def part1(fname=TEST_NAME):
     # graph0.printme()
     graph0.reduce_graph()
     graph0.printme_reduced()
-    # todo: reduce graph0
-    # todo: exhaustively search reduced graph
-    
+    return graph0.crawl_graph_best_next()
 
 if __name__ == "__main__":
-    part1()
+    score_test = part1()
+    print(f"{score_test=}")
 
 
 
