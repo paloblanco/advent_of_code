@@ -167,7 +167,7 @@ class Graph:
         nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
         nodes_remaining.remove(current_node.name)
         start_name = current_node.name
-        possible_sequences = self.check_combos(start_name,nodes_remaining,steps=30,chunksize=3,perm_count=3)
+        possible_sequences = self.check_combos(start_name,nodes_remaining,steps=steps,chunksize=chunksize,perm_count=perm_count)
         return possible_sequences
 
     def depth_first_graph(self, steps=30):
@@ -241,7 +241,7 @@ def part1(fname=TEST_NAME):
     graph0.printme_reduced()
     # return graph0.crawl_graph_best_next()
     # return graph0.crawl_graph_all()
-    sequences = graph0.crawl_graph_chunked()
+    sequences = graph0.crawl_graph_chunked(self,steps=30,chunksize=3,perm_count=6)
     return sequences
 
 if __name__ == "__main__":
