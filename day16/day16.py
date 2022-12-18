@@ -157,7 +157,7 @@ class Graph:
         return record
 
     def crawl_all2(self, steps=26, limit=5):
-        all_perms_1 = self.crawl_graph_all_limit(steps=steps,limit=limit)
+        all_perms_1 = self.crawl_graph_all_limit(steps=steps,limit=limit+1)
         all_perms_1 = [(score,tuple(perm),steps) for score,perm,steps in all_perms_1]
         all_perms_1 = set(all_perms_1)
         all_nodes = {k for k in self.nodes_reduced.keys() if k != 'AA'}
@@ -170,7 +170,7 @@ class Graph:
             records = self.crawl_graph_all_limit_ext(nodes_remaining,steps=26,limit=5,startname=startname)
             best_score = max([x[0] for x in records])
             max_score = max(max_score,score+best_score)
-            print(f"{i=}   {max_score=}")
+            if i%100==0: print(f"{i=}   {max_score=}")
         return max_score
 
     def check_combos(self,start_name,nodes_remaining,steps=30,chunksize=3,perm_count=3):
@@ -317,7 +317,7 @@ if __name__ == "__main__":
     #     print(each) # 1647 to high, 1457 too low
 
     score2 = part2(INPUT_NAME)
-    print(f"{score2=}") # 2118 too low
+    print(f"{score2=}") # 2178 too low
     
 
 
