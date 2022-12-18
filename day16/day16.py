@@ -137,6 +137,18 @@ class Graph:
             best_score = max(best_score,score)
         return best_score
 
+    def crawl_graph_all_limit(self,steps=30,limit=6):
+        current_node = self.nodes_reduced['AA']
+        nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
+        nodes_remaining.remove(current_node.name)
+        startname = current_node.name
+        # best_score=0
+        record = []
+        for perm in permutations(nodes_remaining, 6):
+            score, steps_needed, perm_short = self.score_permutation(perm,startname,steps)
+            record.append([score,perm_short,steps_needed])
+        return record
+
     def check_combos(self,start_name,nodes_remaining,steps=30,chunksize=3,perm_count=3):
         return_scores = []
         if len(nodes_remaining) <= chunksize:
@@ -167,6 +179,15 @@ class Graph:
             return return_scores_deep
 
     def crawl_graph_chunked(self,steps=30,chunksize=3,perm_count=3):
+        # return the best n=permcount combos for a chunk
+        current_node = self.nodes_reduced['AA']
+        nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
+        nodes_remaining.remove(current_node.name)
+        start_name = current_node.name
+        possible_sequences = self.check_combos(start_name,nodes_remaining,steps=steps,chunksize=chunksize,perm_count=perm_count)
+        return possible_sequences
+
+    def crawl_graph_chunked2(self,steps=26,chunksize=5,perm_count=3):
         # return the best n=permcount combos for a chunk
         current_node = self.nodes_reduced['AA']
         nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
@@ -247,7 +268,8 @@ def part1(fname=TEST_NAME):
     # return graph0.crawl_graph_best_next()
     # return graph0.crawl_graph_all()
     print(f"Bestnext: {graph0.crawl_graph_best_next()}")
-    sequences = graph0.crawl_graph_chunked(steps=30,chunksize=6,perm_count=6)
+    # sequences = graph0.crawl_graph_chunked(steps=30,chunksize=6,perm_count=6)
+    sequences = graph0.crawl_graph_all_limit(steps=30,limit=6)
     return sorted(sequences,key=lambda x: x[0],reverse=True)[:100]
 
 if __name__ == "__main__":
