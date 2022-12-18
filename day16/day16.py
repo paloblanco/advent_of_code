@@ -317,7 +317,7 @@ if __name__ == "__main__":
     #     print(each) # 1647 to high, 1457 too low
 
     score2 = part2(INPUT_NAME)
-    print(f"{score2=}") # 2178 too low
+    print(f"{score2=}") # 2178 too low 2191 is right
     
 
 
