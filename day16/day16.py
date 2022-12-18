@@ -144,10 +144,34 @@ class Graph:
         startname = current_node.name
         # best_score=0
         record = []
-        for perm in permutations(nodes_remaining, 6):
+        for perm in permutations(nodes_remaining, limit):
             score, steps_needed, perm_short = self.score_permutation(perm,startname,steps)
             record.append([score,perm_short,steps_needed])
         return record
+
+    def crawl_graph_all_limit_ext(self,nodes_remaining,steps=26,limit=5,startname='AA'):
+        record = []
+        for perm in permutations(nodes_remaining, limit):
+            score, steps_needed, perm_short = self.score_permutation(perm,startname,steps)
+            record.append([score,perm_short,steps_needed])
+        return record
+
+    def crawl_all2(self, steps=26, limit=5):
+        all_perms_1 = self.crawl_graph_all_limit(steps=steps,limit=limit)
+        all_perms_1 = [(score,tuple(perm),steps) for score,perm,steps in all_perms_1]
+        all_perms_1 = set(all_perms_1)
+        all_nodes = {k for k in self.nodes_reduced.keys() if k != 'AA'}
+        max_score = 0
+        print(f"{len(all_perms_1)}")
+        print(f"{all_nodes=}")
+        for i,(score, perm, steps) in enumerate(all_perms_1):
+            startname = 'AA'
+            nodes_remaining = all_nodes - set(perm)
+            records = self.crawl_graph_all_limit_ext(nodes_remaining,steps=26,limit=5,startname=startname)
+            best_score = max([x[0] for x in records])
+            max_score = max(max_score,score+best_score)
+            print(f"{i=}   {max_score=}")
+        return max_score
 
     def check_combos(self,start_name,nodes_remaining,steps=30,chunksize=3,perm_count=3):
         return_scores = []
@@ -272,20 +296,29 @@ def part1(fname=TEST_NAME):
     sequences = graph0.crawl_graph_all_limit(steps=30,limit=6)
     return sorted(sequences,key=lambda x: x[0],reverse=True)[:100]
 
+def part2(fname=TEST_NAME):
+    node_data = read_data(fname)
+    graph0 = Graph(node_data)
+    graph0.reduce_graph()
+    graph0.printme_reduced()
+    best_score = graph0.crawl_all2(steps=26,limit=5)
+    return best_score
+
 if __name__ == "__main__":
     # score_test = part1()
     # print(f"{score_test=}")
 
-    seq_test = part1()
-    for each in seq_test:
-        print(each) # 1647 to high, 1457 too low
+    # seq_test = part1()
+    # for each in seq_test:
+    #     print(each) # 1647 to high, 1457 too low
 
-    seq_test = part1(INPUT_NAME)
-    for each in seq_test:
-        print(each) # 1647 to high, 1457 too low
+    # seq_test = part1(INPUT_NAME)
+    # for each in seq_test:
+    #     print(each) # 1647 to high, 1457 too low
 
-    # score_1 = part1(INPUT_NAME)
-    # print(f"{score_1=}")
+    score2 = part2(INPUT_NAME)
+    print(f"{score2=}") # 2118 too low
+    
 
 
 
