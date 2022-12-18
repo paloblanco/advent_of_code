@@ -97,7 +97,7 @@ class Graph:
         return distances
 
     def reduce_graph(self):
-        nonzero_names = [self.raw[0][0],]
+        nonzero_names = ['AA',]
         for n in self.nodes.values():
             if n.value > 0: nonzero_names.append(n.name)
         for name in nonzero_names:
@@ -113,6 +113,7 @@ class Graph:
         steps_old = steps
         score=0
         old = startname
+        return_perm=[]
         for name in perm:
             dist = self.nodes_reduced[old].neighbors[name][1]
             val = self.nodes_reduced[name].value
@@ -122,16 +123,17 @@ class Graph:
                 break
             score += max(steps*val,0)
             old=name
-        return score,steps_old - steps
+            return_perm.append(name)
+        return score,steps_old - steps, return_perm
     
     def crawl_graph_all(self,steps=30):
-        current_node = self.nodes_reduced[self.raw[0][0]]
+        current_node = self.nodes_reduced['AA']
         nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
         nodes_remaining.remove(current_node.name)
         startname = current_node.name
         best_score=0
         for perm in permutations(nodes_remaining):
-            score, steps_needed = self.score_permutation(perm,startname,steps)
+            score, steps_needed, _ = self.score_permutation(perm,startname,steps)
             best_score = max(best_score,score)
         return best_score
 
@@ -139,17 +141,20 @@ class Graph:
         return_scores = []
         if len(nodes_remaining) <= chunksize:
             for perm in permutations(nodes_remaining):
-                score, steps_needed = self.score_permutation(perm,start_name,steps)
-                return_scores.append((score,perm,steps_needed))
+                score, steps_needed, endperm = self.score_permutation(perm,start_name,steps)
+                return_scores.append((score,endperm,steps_needed))
             return_scores = sorted(return_scores,key= lambda x: x[0],reverse=True)[:perm_count]
             return return_scores
         else:
             for perm in permutations(nodes_remaining, r=chunksize):
-                score, steps_needed = self.score_permutation(perm,start_name,steps)
-                return_scores.append([score,perm,steps_needed])
+                score, steps_needed, endperm = self.score_permutation(perm,start_name,steps)
+                return_scores.append([score,endperm,steps_needed])
             return_scores = sorted(return_scores,key= lambda x: x[0],reverse=True)[:perm_count]
             return_scores_deep = []
             for score, perm, steps_needed, in return_scores:
+                if len(perm) < 3:
+                    return_scores_deep.append([score,perm,steps_needed])
+                    continue
                 nodes_remaining_sub = [each for each in nodes_remaining if each not in perm]
                 start_sub = perm[-1]
                 steps_remaining = steps - steps_needed
@@ -163,7 +168,7 @@ class Graph:
 
     def crawl_graph_chunked(self,steps=30,chunksize=3,perm_count=3):
         # return the best n=permcount combos for a chunk
-        current_node = self.nodes_reduced[self.raw[0][0]]
+        current_node = self.nodes_reduced['AA']
         nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
         nodes_remaining.remove(current_node.name)
         start_name = current_node.name
@@ -171,7 +176,7 @@ class Graph:
         return possible_sequences
 
     def depth_first_graph(self, steps=30):
-        current_node = self.nodes[self.raw[0][0]]
+        current_node = self.nodes['AA']
         frontier = []
         explored = set()
         for n,dd in current_node.neighbors.values():
@@ -182,11 +187,11 @@ class Graph:
 
 
     def bfs_reduced_graph(self,steps=30):
-        current_node = self.nodes_reduced[self.raw[0][0]]
+        current_node = self.nodes_reduced['AA']
         frontier = Queue()
     
     def crawl_graph_best_next(self, steps=30):
-        current_node = self.nodes_reduced[self.raw[0][0]]
+        current_node = self.nodes_reduced['AA']
         nodes_visited: list[str] = [current_node.name,]
         nodes_remaining: list[str] = [k for k in self.nodes_reduced.keys()]
         nodes_remaining.remove(current_node.name)
@@ -241,16 +246,21 @@ def part1(fname=TEST_NAME):
     graph0.printme_reduced()
     # return graph0.crawl_graph_best_next()
     # return graph0.crawl_graph_all()
-    sequences = graph0.crawl_graph_chunked(self,steps=30,chunksize=3,perm_count=6)
-    return sequences
+    print(f"Bestnext: {graph0.crawl_graph_best_next()}")
+    sequences = graph0.crawl_graph_chunked(steps=30,chunksize=6,perm_count=6)
+    return sorted(sequences,key=lambda x: x[0],reverse=True)[:100]
 
 if __name__ == "__main__":
-    score_test = part1()
-    print(f"{score_test=}")
+    # score_test = part1()
+    # print(f"{score_test=}")
 
     seq_test = part1()
     for each in seq_test:
-        print(each)
+        print(each) # 1647 to high, 1457 too low
+
+    seq_test = part1(INPUT_NAME)
+    for each in seq_test:
+        print(each) # 1647 to high, 1457 too low
 
     # score_1 = part1(INPUT_NAME)
     # print(f"{score_1=}")
