@@ -235,7 +235,8 @@ if __name__ == "__main__":
     # gives us 1514285714288 - test passes!
 
 
-
+    # real:
+    # start height is 1564705882009, extra height is 318, total is 1564705882327
 
 
 
