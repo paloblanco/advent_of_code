@@ -114,6 +114,10 @@ def part1(fname=TEST_NAME, rock_count = 2022):
 
 
 if __name__ == "__main__":
-    height_part1 = part1()
+    height_part1_test = part1()
+    print(f"{height_part1_test=}")
+    
+    
+    height_part1 = part1(INPUT_NAME)
     print(f"{height_part1=}")
     
