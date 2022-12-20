@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from collections import deque
 from itertools import product
+from math import ceil
 
 TEST_NAME = "day19input_test.txt"
 INPUT_NAME = "day19input.txt"
@@ -72,6 +73,62 @@ class Inventory:
         early_cut = len(plan) > 0
         return ores[3], steps_executed, early_cut
 
+@dataclass
+class State:
+    steps_left: int
+    path_to_me: tuple[int]
+    blueprint: list[int]
+
+    def __post_init__(self):
+        self.robots = [1,0,0,0]
+        self.ores = [0,0,0,0]
+        self.assign_blueprint()
+    
+    @property
+    def true_score(self):
+        return self.robots[3]*self.steps_left
+
+    @property
+    def best_possible_score(self):
+        theoretical = self.steps_left*(self.steps_left)/2
+        return self.true_score + theoretical
+
+    def assign_blueprint(self):
+        self.requirements[0] = [self.blueprint[0],0,0,0]
+        self.requirements[1] = [self.blueprint[1],0,0,0]
+        self.requirements[2] = [self.blueprint[2],self.blueprint[3],0,0]
+        self.requirements[3] = [self.blueprint[4],0,self.blueprint[5],0]
+
+    def try_to_take_next_step(self,next_step):
+        needed = [req-have for req,have in zip(self.requirements[next_step], self.ores)]
+        minutes_needed = max([ceil(need/rob) for need,rob in zip(needed,self.robots)]) + 1
+        if minutes_needed >= self.steps_left:
+            return None
+        ores_new = [ore+rob*minutes_needed for ore,rob in zip(self.ores,self.robots)]
+        ores_new = [ore-req for ore,req in zip(ores_new,self.requirements[next_step])]
+        robots_new = [r for r in self.robots]
+        robots_new[next_step] += 1
+        steps_left_new = self.steps_left - minutes_needed
+        path_new = self.path_to_me + (next_step,)
+        state = State(steps_left_new, path_new,self.blueprint)
+        state.requirements = self.requirements
+        state.robots = robots_new
+        state.ores = ores_new
+        return state
+
+    def return_new_states(self):
+        # this will take a step and return the new states in a list
+        options = [0,1]
+        states = []
+        if 1 in self.path_to_me:
+            options.append(2)
+        if 2 in self.path_to_me:
+            options.append(3)
+        for next_step in options:
+            new_state = self.try_to_take_next_step(next_step)
+            if new_state: states.append(new_state)
+        return states
+
 
 def return_blueprint_list(fname=TEST_NAME) -> list:
     blueprints = []
@@ -119,6 +176,16 @@ def run_recipe_1(bp):
             winner=p_final
     print(f"{best_score=}")
     print(f"{winner=}")
+
+
+def search_recipe(bp):
+    pass
+
+
+def part1_search(fname=TEST_NAME):
+    blueprints = return_blueprint_list(fname)
+    for ID,bp in enumerate(blueprints):
+        search_recipe(bp)
 
 def part1(fname=TEST_NAME):
     blueprints = return_blueprint_list(fname)
