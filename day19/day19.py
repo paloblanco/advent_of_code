@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from collections import deque
 from itertools import product
 from math import ceil
+from heapq import heappush,heappop
 
 TEST_NAME = "day19input_test.txt"
 INPUT_NAME = "day19input.txt"
@@ -17,10 +18,28 @@ Until you have certain robots, you don't even have certain options.
 
 4**10
 """
+
+@dataclass
+class PQueue:
+    _container: list[Node] = field(default_factory=list)
+
+    def push(self, node: Node):
+        heappush(self._container, node)
+
+    def pop(self) -> Node:
+        return heappop(self._container)
+
+    @property
+    def empty(self) -> bool:
+        return len(self._container) > 0
+
+
+
 ORE         = 0
 CLAY        = 1
 OBSIDIAN    = 2
 GEODE       = 3
+
 
 @dataclass
 class Inventory:
@@ -83,7 +102,14 @@ class State:
         self.robots = [1,0,0,0]
         self.ores = [0,0,0,0]
         self.assign_blueprint()
+
+    def __lt__(self, other):
+        return -self.best_possible_score < -other.best_possible_score
     
+    @property
+    def state(self):
+        return tuple(self.robots) + tuple(self.ores)
+
     @property
     def true_score(self):
         return self.robots[3]*self.steps_left
@@ -179,7 +205,12 @@ def run_recipe_1(bp):
 
 
 def search_recipe(bp):
-    pass
+    frontier = PQueue()
+    explored = dict()
+    best_true_score = 0
+    state_current = State(24,(0,),bp)
+    state_current.assign_blueprint()
+    
 
 
 def part1_search(fname=TEST_NAME):
