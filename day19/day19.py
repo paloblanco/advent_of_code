@@ -21,17 +21,31 @@ Until you have certain robots, you don't even have certain options.
 
 @dataclass
 class PQueue:
-    _container: list[Node] = field(default_factory=list)
+    _container: list = field(default_factory=list)
 
-    def push(self, node: Node):
+    def push(self, node):
         heappush(self._container, node)
 
-    def pop(self) -> Node:
+    def pop(self):
         return heappop(self._container)
 
     @property
     def empty(self) -> bool:
-        return len(self._container) > 0
+        return len(self._container) <= 0
+
+@dataclass
+class Stack:
+    _container: list = field(default_factory=list)
+
+    def push(self, node):
+        self._container.append(node)
+
+    def pop(self):
+        return self._container.pop()
+
+    @property
+    def empty(self) -> bool:
+        return len(self._container) <= 0
 
 
 
@@ -97,6 +111,13 @@ class State:
     steps_left: int
     path_to_me: tuple[int]
     blueprint: list[int]
+    true_score: int = 0
+
+    def __str__(self):
+        return f"Steps2go: {self.steps_left}   Rob: {self.robots}   Ores: {self.ores}   TS: {self.true_score}"
+
+    def __repr__(self):
+        return self.__str__()
 
     def __post_init__(self):
         self.robots = [1,0,0,0]
@@ -110,9 +131,8 @@ class State:
     def state(self):
         return tuple(self.robots) + tuple(self.ores)
 
-    @property
-    def true_score(self):
-        return self.robots[3]*self.steps_left
+    def add_true_score(self):
+        self.true_score += self.steps_left
 
     @property
     def best_possible_score(self):
@@ -120,14 +140,24 @@ class State:
         return self.true_score + theoretical
 
     def assign_blueprint(self):
+        self.requirements=[[],[],[],[],]
         self.requirements[0] = [self.blueprint[0],0,0,0]
         self.requirements[1] = [self.blueprint[1],0,0,0]
         self.requirements[2] = [self.blueprint[2],self.blueprint[3],0,0]
         self.requirements[3] = [self.blueprint[4],0,self.blueprint[5],0]
+        self.maxes = []
+        for i in range(4):
+            self.maxes.append(max([each[i] for each in self.requirements]))
 
     def try_to_take_next_step(self,next_step):
         needed = [req-have for req,have in zip(self.requirements[next_step], self.ores)]
-        minutes_needed = max([ceil(need/rob) for need,rob in zip(needed,self.robots)]) + 1
+        minutes_needed = 0
+        for need,rob in zip(needed,self.robots):
+            try:
+                minutes_needed = max(minutes_needed,ceil(need/rob))
+            except ZeroDivisionError:
+                pass
+        minutes_needed += 1
         if minutes_needed >= self.steps_left:
             return None
         ores_new = [ore+rob*minutes_needed for ore,rob in zip(self.ores,self.robots)]
@@ -136,10 +166,12 @@ class State:
         robots_new[next_step] += 1
         steps_left_new = self.steps_left - minutes_needed
         path_new = self.path_to_me + (next_step,)
-        state = State(steps_left_new, path_new,self.blueprint)
+        state = State(steps_left_new, path_new,self.blueprint, true_score=self.true_score)
         state.requirements = self.requirements
+        state.maxes = self.maxes
         state.robots = robots_new
         state.ores = ores_new
+        if next_step == GEODE: state.add_true_score()
         return state
 
     def return_new_states(self):
@@ -150,6 +182,12 @@ class State:
             options.append(2)
         if 2 in self.path_to_me:
             options.append(3)
+        for i in range(3):
+            if self.robots[i] >= self.maxes[i]:
+                try:
+                    options.remove(i)
+                except:
+                    pass
         for next_step in options:
             new_state = self.try_to_take_next_step(next_step)
             if new_state: states.append(new_state)
@@ -212,15 +250,26 @@ def search_recipe(bp):
     state_current.assign_blueprint()
     explored[state_current.state] = state_current.best_possible_score
     frontier.push(state_current)
-    while frontier:
-        pass
+    best_true_score = max(best_true_score,state_current.true_score)
+    while not frontier.empty:
+        state_current: State = frontier.pop()
+        for new_state in state_current.return_new_states():
+            if new_state.best_possible_score <= best_true_score: continue
+            if new_state.state in explored:
+                if new_state.best_possible_score <= explored[new_state.state]:
+                    continue
+            frontier.push(new_state)
+            explored[new_state.state] = new_state.best_possible_score
+            best_true_score = max(best_true_score,new_state.true_score)
+    return best_true_score
     
-
 
 def part1_search(fname=TEST_NAME):
     blueprints = return_blueprint_list(fname)
+    best_scores = []
     for ID,bp in enumerate(blueprints):
-        search_recipe(bp)
+        best_scores.append(search_recipe(bp))
+    return sum([(i+1)*bs for i,bs in enumerate(best_scores)])
 
 def part1(fname=TEST_NAME):
     blueprints = return_blueprint_list(fname)
@@ -228,7 +277,26 @@ def part1(fname=TEST_NAME):
     #     run_recipe_1(bp)
     run_recipe_1(blueprints[1])
 
-if __name__ == "__main__":
-    ores_test = part1()
-    # print(f"{ores_test=}")
+def test_making_children():
+    blueprints = return_blueprint_list()
+    state_current = State(24,(0,),blueprints[0])
+    state_current.assign_blueprint()
+    states = []
+    print(state_current)
+    for each in state_current.return_new_states():
+        print(each)
+        for e in each.return_new_states():
+            print(e)
+            for c in e.return_new_states():
+                print(c)
+                for d in c.return_new_states():
+                    print(d)
+                    for f in d.return_new_states():
+                        print(f)
 
+
+if __name__ == "__main__":
+    test_1 =  part1_search()
+    print(f"{test_1=}")
+        
+    
