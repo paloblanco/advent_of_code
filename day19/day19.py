@@ -242,11 +242,11 @@ def run_recipe_1(bp):
     print(f"{winner=}")
 
 
-def search_recipe(bp):
+def search_recipe(bp, timeremaining=24):
     frontier = PQueue()
     explored = dict()
     best_true_score = 0
-    state_current = State(24,(0,),bp)
+    state_current = State(timeremaining,(0,),bp)
     state_current.assign_blueprint()
     explored[state_current.state] = state_current.best_possible_score
     frontier.push(state_current)
@@ -262,7 +262,13 @@ def search_recipe(bp):
             explored[new_state.state] = new_state.best_possible_score
             best_true_score = max(best_true_score,new_state.true_score)
     return best_true_score
-    
+
+def part2_search(fname=TEST_NAME):
+    blueprints = return_blueprint_list(fname)[:3]
+    best_scores = []
+    for ID,bp in enumerate(blueprints):
+        best_scores.append(search_recipe(bp,timeremaining=32))
+    return best_scores
 
 def part1_search(fname=TEST_NAME):
     blueprints = return_blueprint_list(fname)
@@ -298,5 +304,14 @@ def test_making_children():
 if __name__ == "__main__":
     test_1 =  part1_search()
     print(f"{test_1=}")
+
+    # part_1 =  part1_search(INPUT_NAME)
+    # print(f"{part_1=}")
         
+    test_2 = part2_search()
+    for e in test_2:
+        print(e)
+
+    part2 = part2_search(INPUT_NAME)
+    print(f"{part2[0]*part2[1]*part2[2]=}")
     
