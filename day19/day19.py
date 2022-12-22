@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from collections import deque
+from collections import deque, defaultdict
 from itertools import product
 from math import ceil
 from heapq import heappush,heappop
@@ -210,6 +210,10 @@ def search_recipe(bp):
     best_true_score = 0
     state_current = State(24,(0,),bp)
     state_current.assign_blueprint()
+    explored[state_current.state] = state_current.best_possible_score
+    frontier.push(state_current)
+    while frontier:
+        pass
     
 
 
