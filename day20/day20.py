@@ -49,7 +49,8 @@ class LinkList:
 
     def mix(self):
         for link in self._container:
-            link.move_ahead(link.value)
+            move_val = link.value%(len(self._container)-1)
+            link.move_ahead(move_val)
 
     def return_val_after_zero(self,position):
         target = self.zero
@@ -87,9 +88,28 @@ def part1(fname=TEST_NAME):
     p2 = ll.return_val_after_zero(3000)
     return p0+p1+p2
 
+def part2(fname=TEST_NAME):
+    nums = return_numbers_from_file(fname)
+    key = 811589153
+    nums = [key*e for e in nums]
+    ll = LinkList(nums)
+    # print(str(ll))
+    for i in range(10):
+        ll.mix()
+    p0 = ll.return_val_after_zero(1000)
+    p1 = ll.return_val_after_zero(2000)
+    p2 = ll.return_val_after_zero(3000)
+    return p0+p1+p2
+
 if __name__ == "__main__":
     test1 = part1() # there are repeat nums in true set
     print(f"{test1=}")
 
     part1_solution = part1(INPUT_NAME)
     print(f"{part1_solution=}")
+
+    test2 = part2()
+    print(f"{test2=}")
+
+    part2_solution = part2(INPUT_NAME)
+    print(f"{part2_solution=}")
