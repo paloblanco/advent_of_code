@@ -14,9 +14,10 @@ class Monkey:
 
     @property
     def value(self):
-        if not self._value:
-            self._value = self.oper(self.left.value,self.right.value)
-        return self._value
+        if self._value==None:
+            return self.oper(self.left.value,self.right.value)
+        else:
+            return self._value
 
 OPERS = {
     "+": lambda x,y: x+y,
@@ -50,6 +51,42 @@ def part1(fname=TEST_NAME):
     monkeys = get_monkeys_from_file(fname)
     return monkeys['root'].value
 
+def between(value,b0,b1):
+    return b1 < value  < b2 or b2 < value < b1
+
+def part2(fname=TEST_NAME):
+    monkeys = get_monkeys_from_file(fname)
+    root = monkeys["root"]
+    root.oper = lambda x,y: x-y
+    humn = monkeys["humn"]
+    
+    def get_root(value):
+        humn._value=value
+        # print(humn)
+        return root.value
+
+    minh = -10000
+    maxh = 10000
+    minr = get_root(minh)
+    maxr = get_root(maxh)
+    newh = 0
+    newr = get_root(newh)
+    while newr != 0:
+        minguess = (newh + minh)//2
+        maxguess = (newh + maxh)//2
+        minguessroot = get_root(minguess)
+        maxguessroot = get_root(maxguess)
+        if abs(minguessroot) < abs(maxguessroot):
+            maxh=newh
+            newr = minguessroot
+            newh = minguess
+        else:
+            minh = newh
+            newr = maxguessroot
+            newh = maxguess
+    print(newr)
+    return newh
+
 
 if __name__ == "__main__":
     test1root = part1()
@@ -57,4 +94,7 @@ if __name__ == "__main__":
 
     part1root = part1(INPUT_NAME)
     print(f"{part1root=}")
+
+    test2 = part2()
+    print(f"{test2=}")
 
