@@ -65,8 +65,8 @@ def part2(fname=TEST_NAME):
         # print(humn)
         return root.value
 
-    minh = -10000
-    maxh = 10000
+    minh = -100000000000000
+    maxh = 100000000000000
     minr = get_root(minh)
     maxr = get_root(maxh)
     newh = 0
@@ -84,6 +84,7 @@ def part2(fname=TEST_NAME):
             minh = newh
             newr = maxguessroot
             newh = maxguess
+        print(f"{minh=}    {newh=}    {maxh=}    {newr=}")
     print(newr)
     return newh
 
@@ -98,3 +99,5 @@ if __name__ == "__main__":
     test2 = part2()
     print(f"{test2=}")
 
+    p2 = part2(INPUT_NAME)
+    print(f"{p2=}")
