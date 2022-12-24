@@ -16,6 +16,9 @@ class Map:
     def __init__(self,fname = TEST_NAME):
         self._map, self._directions = self.make_map_from_file(fname)
         self._directions = self.fix_directions(self._directions)
+        self.direction = 0
+        self.height = len(self._map)
+        self.width = len(self._map[0])
         
     def mget(self,x,y):
         return self._map[y-1][x-1]
@@ -60,9 +63,50 @@ class Map:
                 rows[i] = row + zeros
         return rows, directions
 
+DIRECTIONS = [
+    (1,0),
+    (0,1),
+    (-1,0),
+    (0,-1),
+]
+
+def part1(fname=TEST_NAME):
+    map = Map(TEST_NAME)
+    x,y = 1,1
+    while map.mget(x,y) != 1:
+        x += 1
+    direction = 0
+    instructions = map._directions
+    for step in instructions:
+        if step=="L":
+            direction = (direction - 1)%4
+        elif step=="R":
+            direction = (direction + 1)%4
+        else:
+            for i in range(step):
+                dx,dy = DIRECTIONS[direction]
+                nx,ny = x+dx,y+dy
+                #wrap if needed
+                if nx > map.width: nx = 1
+                if nx < 1: nx = map.width
+                if ny > map.height: ny = 1
+                if ny < 1: ny = map.height
+                while map.mget(nx,ny)==0:
+                    nx,ny = nx+dx,ny+dy
+                    if nx > map.width: nx = 1
+                    if nx < 1: nx = map.width
+                    if ny > map.height: ny = 1
+                    if ny < 1: ny = map.height
+                if map.mget(nx,ny)==2:
+                    break
+                x,y = nx,ny
+    print(f"{x=}   {y=}   {direction=}")
+    return 4*x + 1000*y + direction
+
+
+
 
 if __name__ == "__main__":
-    map = Map(TEST_NAME)
-    for r in map._map:
-        print(r)
-    print(map._directions)
+    pwtest = part1()
+    print(f"{pwtest=}")
+    
