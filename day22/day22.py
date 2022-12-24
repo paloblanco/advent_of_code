@@ -110,7 +110,7 @@ ZONES = [
     [6,0,0]
 ]
 
-def get_zone(x,y):
+def get_zone(x,y,edge=4):
     return ZONES[(y-1)//50][(x-1)//50]
 
 def part2(fname=TEST_NAME):
@@ -128,6 +128,7 @@ def part2(fname=TEST_NAME):
         else:
             for i in range(step):
                 zone_now = get_zone(x,y)
+                # print(f"{x=}   {y=}   {zone_now=}")
                 dx,dy = DIRECTIONS[direction]
                 direction_old=direction
                 nx,ny = x+dx,y+dy
@@ -176,32 +177,33 @@ def part2(fname=TEST_NAME):
                             case 2:
                                 nx=100
                                 direction=2
-                                ny=100+(51-ny)
+                                ny=50+nx-100
                             case 5:
-                                ny=50
-                                direction=3
-                                nx=100+(ny-50) 
-                            case 6:
-                                nx=150
+                                nx=50
                                 direction=2
-                                ny=151-ny
-                            
-
-
-
-                if nx > map.width: nx = 1
-                if nx < 1: nx = map.width
-                if ny > map.height: ny = 1
-                if ny < 1: ny = map.height
-                while map.mget(nx,ny)==0:
-                    nx,ny = nx+dx,ny+dy
-                    if nx > map.width: nx = 1
-                    if nx < 1: nx = map.width
-                    if ny > map.height: ny = 1
-                    if ny < 1: ny = map.height
-                if map.mget(nx,ny)==2:
+                                ny=150+nx-50
+                            case 6:
+                                ny=1
+                                direction=1
+                                nx=nx+100
+                elif dy < 0:
+                    if ny < 1 or map.mget(nx,ny)==0:
+                        match zone_now:
+                            case 2:
+                                ny=200
+                                direction=3
+                                nx=nx-100
+                            case 1:
+                                nx=1
+                                direction=0
+                                ny=150+nx-50
+                            case 4:
+                                nx=50
+                                direction=0
+                                ny=50+nx
+                if map.mget(nx,ny)==WALL:
                     break
-                x,y = nx,ny
+                x,y = nx,ny            
     print(f"{x=}   {y=}   {direction=}")
     return 4*x + 1000*y + direction
 
@@ -213,3 +215,5 @@ if __name__ == "__main__":
     pw1 = part1(INPUT_NAME)
     print(f"{pw1=}")
     
+    pwtest2 = part2()
+    print(f"{pwtest2=}")
