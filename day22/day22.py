@@ -110,7 +110,7 @@ ZONES = [
     [6,0,0]
 ]
 
-def get_zone(x,y,edge=4):
+def get_zone(x,y):
     return ZONES[(y-1)//50][(x-1)//50]
 
 def part2(fname=TEST_NAME):
@@ -130,7 +130,7 @@ def part2(fname=TEST_NAME):
                 zone_now = get_zone(x,y)
                 # print(f"{x=}   {y=}   {zone_now=}")
                 dx,dy = DIRECTIONS[direction]
-                direction_old=direction
+                dnew=direction
                 nx,ny = x+dx,y+dy
                 #wrap if needed
                 if dx > 0:
@@ -138,72 +138,72 @@ def part2(fname=TEST_NAME):
                         match zone_now:
                             case 2:
                                 nx=100
-                                direction=2
+                                dnew=2
                                 ny=100+(51-ny)
                             case 3:
                                 ny=50
-                                direction=3
+                                dnew=3
                                 nx=100+(ny-50) 
                             case 5:
                                 nx=150
-                                direction=2
+                                dnew=2
                                 ny=151-ny
                             case 6:
                                 ny=150
-                                direction=3
+                                dnew=3
                                 nx=50+(ny-150)
-                elif dy < 0:
+                elif dx < 0:
                     if nx < 1 or map.mget(nx,ny)==0:
                         match zone_now:
                             case 1:
                                 nx=1
-                                direction=0
+                                dnew=0
                                 ny=100+(51-ny)
                             case 3:
                                 ny=101
-                                direction=1
+                                dnew=1
                                 nx = ny-50
                             case 4:
                                 nx=51
-                                direction=0
+                                dnew=0
                                 ny=151-ny
                             case 6:
-                                nx=1
-                                direction=1
+                                ny=1
+                                dnew=1
                                 nx = ny-100
                 elif dy > 0:
                     if ny > map.height or map.mget(nx,ny)==0:
                         match zone_now:
                             case 2:
                                 nx=100
-                                direction=2
+                                dnew=2
                                 ny=50+nx-100
                             case 5:
                                 nx=50
-                                direction=2
+                                dnew=2
                                 ny=150+nx-50
                             case 6:
                                 ny=1
-                                direction=1
+                                dnew=1
                                 nx=nx+100
                 elif dy < 0:
                     if ny < 1 or map.mget(nx,ny)==0:
                         match zone_now:
                             case 2:
                                 ny=200
-                                direction=3
+                                dnew=3
                                 nx=nx-100
                             case 1:
                                 nx=1
-                                direction=0
+                                dnew=0
                                 ny=150+nx-50
                             case 4:
                                 nx=50
-                                direction=0
+                                dnew=0
                                 ny=50+nx
                 if map.mget(nx,ny)==WALL:
                     break
-                x,y = nx,ny            
+                x,y, direction = nx,ny,dnew
     print(f"{x=}   {y=}   {direction=}")
     return 4*x + 1000*y + direction
 
@@ -215,5 +215,5 @@ if __name__ == "__main__":
     pw1 = part1(INPUT_NAME)
     print(f"{pw1=}")
     
-    pwtest2 = part2()
-    print(f"{pwtest2=}")
+    pwtest2 = part2(INPUT_NAME)
+    print(f"{pwtest2=}") # pwtest2=55370 too low
