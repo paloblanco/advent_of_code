@@ -71,7 +71,7 @@ DIRECTIONS = [
 ]
 
 def part1(fname=TEST_NAME):
-    map = Map(TEST_NAME)
+    map = Map(fname)
     x,y = 1,1
     while map.mget(x,y) != 1:
         x += 1
@@ -109,4 +109,7 @@ def part1(fname=TEST_NAME):
 if __name__ == "__main__":
     pwtest = part1()
     print(f"{pwtest=}")
+
+    pw1 = part1(INPUT_NAME)
+    print(f"{pw1=}")
     
