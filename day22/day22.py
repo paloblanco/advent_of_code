@@ -139,88 +139,84 @@ def part2(fname=TEST_NAME):
                             case 2:
                                 nx=100
                                 dnew=2
-                                ny=101+(50-ny)
+                                ny=101+(50-y)
                             case 3:
                                 ny=50
                                 dnew=3
-                                nx=100+(ny-50) 
+                                nx=100+(y-50) 
                             case 5:
                                 nx=150
                                 dnew=2
-                                ny=151-ny
+                                ny=151-y
                             case 6:
                                 ny=150
                                 dnew=3
-                                nx=50+(ny-150)
+                                nx=50+(y-150)
                 elif dx < 0:
                     if nx < 1 or map.mget(nx,ny)==0:
                         match zone_now:
                             case 1:
-                                print("WHat happened")
-                                print("========")
-                                print(f"{dx=}    {dy=}")
-                                print(f"{x=}   {y=}   {zone_now=}   {direction=}")
                                 nx=1
                                 dnew=0
-                                ny=100+(51-ny)
+                                ny=100+(51-y)
                             case 3:
                                 ny=101
                                 dnew=1
-                                nx = ny-50
+                                nx = y-50
                             case 4:
                                 nx=51
                                 dnew=0
-                                ny=151-ny
+                                ny=151-y
                             case 6:
                                 ny=1
                                 dnew=1
-                                nx = ny-100
+                                nx = y-100
                 elif dy > 0:
                     if ny > map.height or map.mget(nx,ny)==0:
                         match zone_now:
                             case 2:
                                 nx=100
                                 dnew=2
-                                ny=50+nx-100
+                                ny=50+x-100
                             case 5:
                                 nx=50
                                 dnew=2
-                                ny=150+nx-50
+                                ny=150+x-50
                             case 6:
                                 ny=1
                                 dnew=1
-                                nx=nx+100
+                                nx=x+100
                 elif dy < 0:
                     if ny < 1 or map.mget(nx,ny)==0:
                         match zone_now:
                             case 2:
                                 ny=200
                                 dnew=3
-                                nx=nx-100
+                                nx=x-100
                             case 1:
-                                print("WHat I wanted")
-                                print("========")
-                                print(f"{dx=}    {dy=}")
-                                print(f"{x=}   {y=}   {zone_now=}   {direction=}")
+                                # print("WHat I wanted")
+                                # print("========")
+                                # print(f"{dx=}    {dy=}")
+                                # print(f"{x=}   {y=}   {zone_now=}   {direction=}")
                                 nx=1
                                 dnew=0
-                                ny=150+nx - 50
+                                ny=150+x - 50
                             case 4:
                                 nx=50
                                 dnew=0
-                                ny=50+nx
+                                ny=50+x
                 if map.mget(nx,ny)==WALL:
-                    print("walled")
-                    continue
+                    # print("walled")
+                    break
                 newzone = get_zone(nx,ny)
                 if newzone != zone_now:
-                    print("========")
-                    print(f"{dx=}    {dy=}")
+                    # print("========")
+                    print(f"======== {dx=}    {dy=} ===============")
                     print(f"{x=}   {y=}   {zone_now=}   {direction=}")
                     print(f"{nx=}   {ny=}   {newzone=}   {dnew=}")
-                    input()
-
+                    # input()
                 x,y, direction = nx,ny,dnew
+
     print(f"{x=}   {y=}   {direction=}")
     return 4*x + 1000*y + direction
 
