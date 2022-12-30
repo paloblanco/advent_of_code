@@ -47,7 +47,7 @@ class Map:
 
     def mget(self,x,y,turns=0):
         # return bool if space is available
-        if (x,y) == self.start:
+        if ((x,y) == self.start) or ((x,y) == self.goal):
             return True
         if x<1 or x>=self.width-1 or y<1 or y>=self.height-1:
             if ((x,y) != self.goal) and ((x,y) != self.start):
@@ -130,15 +130,13 @@ class PQueue:
     def empty(self) -> bool:
         return len(self._container) <= 0
 
-
-def part1(fname=TEST_NAME):
-    storm_map = Map(fname)
-    frontier = PQueue()
-    explored = set() # tuples of x,y,turns
+def astar_map(storm_map: Map, start_turns: int=0):
     x0,y0 = storm_map.start
     xf,yf = storm_map.goal
+    frontier = PQueue()
+    explored = set() # tuples of x,y,turns
     score0 = storm_map.return_score(x0,y0)
-    state0 = State(x0,y0,0,score0)
+    state0 = State(x0,y0,start_turns,score0)
     explored.add(state0.state)
     frontier.push(state0)
     turns=0
@@ -151,6 +149,23 @@ def part1(fname=TEST_NAME):
                 explored.add(new_state.state)
                 frontier.push(new_state)
     return False
+
+def part1(fname=TEST_NAME):
+    storm_map = Map(fname)
+    return astar_map(storm_map, start_turns=0)
+
+
+def part2(fname=TEST_NAME):
+    storm_map = Map(fname)
+    round1,_ = astar_map(storm_map,start_turns=0)
+    storm_map.start, storm_map.goal = storm_map.goal, storm_map.start
+    print(f"{round1.turns=}")
+    round2,_ = astar_map(storm_map,start_turns=round1.turns)
+    storm_map.start, storm_map.goal = storm_map.goal, storm_map.start
+    print(f"{round2.turns=}")
+    round3,_ = astar_map(storm_map,start_turns=round2.turns)
+    print(f"{round3.turns=}")
+    return round3
 
 
 def show(m: Map, s: State):
@@ -173,9 +188,9 @@ if __name__ == "__main__":
     #     print()
     
 
-    p1,m = part1(INPUT_NAME)
-    print(f"{p1.turns=}") # 233 is too low
-    print(f"{m.height=}   {m.width=}")
+    # p1,m = part1(INPUT_NAME)
+    # print(f"{p1.turns=}") # 233 is too low
+    # print(f"{m.height=}   {m.width=}")
     # tlist = [p1,]
     # tnow = p1.prev
     # while tnow:
@@ -184,6 +199,12 @@ if __name__ == "__main__":
     # for t in tlist[::-1]:
     #     # show(m,t)
     #     print(f"{t.state}")
+
+    t2 = part2()
+    print(f"{t2.turns=}")
+
+    p2 = part2()
+    print(f"{p2.turns=}")
 
 
 
