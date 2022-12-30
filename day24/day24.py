@@ -203,7 +203,8 @@ if __name__ == "__main__":
     t2 = part2()
     print(f"{t2.turns=}")
 
-    p2 = part2()
+    print("=====")
+    p2 = part2(INPUT_NAME)
     print(f"{p2.turns=}")
 
 
