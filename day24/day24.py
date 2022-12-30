@@ -25,7 +25,7 @@ class Map:
         with open(fname) as f:
             valley = [list(e.strip()) for e in f.readlines()]
         self._map = valley
-        self.start = (0,1)
+        self.start = (1,0)
         self.goal = (len(valley[0])-2,len(valley)-1)
         self.width = len(valley[0])
         self.height = len(valley)
@@ -49,7 +49,7 @@ class Map:
         # return bool if space is available
         if (x,y) == self.start:
             return True
-        if x<1 or x>=self.width or y<1 or y>=self.height:
+        if x<1 or x>=self.width-1 or y<1 or y>=self.height-1:
             if ((x,y) != self.goal) and ((x,y) != self.start):
                 return False # easy way out
         xleft = x+turns
@@ -84,13 +84,15 @@ class Map:
 
     def get_next_states(self,state: 'State'):
         new_states = []
-        for xadd,yadd in [[0,0],] + DIRECTIONS:
+        for xadd,yadd in ([[0,0],] + DIRECTIONS):
             newturns = state.turns + 1
             newx = state.x + xadd
             newy = state.y + yadd
             if self.mget(newx,newy,newturns):
                 score_new = self.return_score(newx,newy)
-                new_states.append(State(newx,newy,newturns,score_new))
+                s = State(newx,newy,newturns,score_new)
+                s.prev = state
+                new_states.append(s)
         return new_states
 
 
@@ -100,6 +102,7 @@ class State:
     y: int
     turns: int
     score: int
+    prev: 'State' = None
 
     @property
     def heuristic(self):
@@ -142,18 +145,45 @@ def part1(fname=TEST_NAME):
     while not frontier.empty:
         state = frontier.pop()
         for new_state in storm_map.get_next_states(state):
-            print(f"{new_state.state=}")
             if (new_state.x, new_state.y) == storm_map.goal:
-                return new_state.turns
+                return new_state, storm_map
             if new_state.state not in explored:
                 explored.add(new_state.state)
                 frontier.push(new_state)
     return False
 
 
+def show(m: Map, s: State):
+    mymap = [[e for e in r] for r in m._map]
+    mymap[s.y][s.x] = "E"
+    for r in mymap:
+        print(''.join(r))
+
+
 if __name__ == "__main__":
-    t1 = part1()
-    print(f"{t1=}")
+    t1,s = part1()
+    print(f"{t1.turns=}")
+    # tlist = [t1,]
+    # tnow = t1.prev
+    # while tnow:
+    #     tlist.append(tnow)
+    #     tnow = tnow.prev
+    # for t in tlist[::-1]:
+    #     show(s,t)
+    #     print()
+    
+
+    p1,m = part1(INPUT_NAME)
+    print(f"{p1.turns=}") # 233 is too low
+    print(f"{m.height=}   {m.width=}")
+    # tlist = [p1,]
+    # tnow = p1.prev
+    # while tnow:
+    #     tlist.append(tnow)
+    #     tnow = tnow.prev
+    # for t in tlist[::-1]:
+    #     # show(m,t)
+    #     print(f"{t.state}")
 
 
 
